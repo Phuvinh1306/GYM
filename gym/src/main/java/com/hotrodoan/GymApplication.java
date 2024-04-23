@@ -1,0 +1,17 @@
+package com.hotrodoan;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+@SpringBootApplication
+@EnableScheduling
+@CrossOrigin(origins = "*")
+public class GymApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(GymApplication.class, args);
+	}
+
+}
