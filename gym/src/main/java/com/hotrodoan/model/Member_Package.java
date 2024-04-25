@@ -1,5 +1,6 @@
 package com.hotrodoan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class Member_Package {
     private Package pack;
 
     private int quantity=1;
-    private double totalPrice;
+    private int amount;
 
     private Date startDate;
     private Date endDate;

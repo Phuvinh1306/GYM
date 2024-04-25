@@ -21,9 +21,9 @@ public class Package {
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;
-    private double price;
+    private int price;
     private int duration;
 
-    @OneToMany(mappedBy = "pack", fetch = FetchType.EAGER)
-    private List<Member_Package> memberPackages;
+//    @OneToMany(mappedBy = "pack", fetch = FetchType.EAGER)
+//    private List<Member_Package> memberPackages;
 }

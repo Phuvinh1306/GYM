@@ -1,17 +1,26 @@
 package com.hotrodoan.controller;
 
+import com.hotrodoan.model.Member_Package;
+import com.hotrodoan.model.VnPayPayment;
+import com.hotrodoan.service.Member_PackageService;
 import com.hotrodoan.service.VNPayService;
+import com.hotrodoan.service.VnPayPaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @org.springframework.stereotype.Controller
 public class Controller {
     @Autowired
     private VNPayService vnPayService;
+
+    @Autowired
+    private VnPayPaymentService vnPayPaymentService;
+
+    @Autowired
+    private Member_PackageService member_packageService;
 
 
     @GetMapping("/pay")
@@ -32,6 +41,7 @@ public class Controller {
     public String GetMapping(HttpServletRequest request, Model model){
         int paymentStatus =vnPayService.orderReturn(request);
 
+        Member_Package member_package = (Member_Package) request.getSession().getAttribute("member_package");
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String paymentTime = request.getParameter("vnp_PayDate");
         String transactionId = request.getParameter("vnp_TransactionNo");
@@ -42,6 +52,19 @@ public class Controller {
         model.addAttribute("paymentTime", paymentTime);
         model.addAttribute("transactionId", transactionId);
 
-        return paymentStatus == 1 ? "ordersuccess" : "orderfail";
+        VnPayPayment vnPayPayment = new VnPayPayment();
+        vnPayPayment.setVnpAmount(totalPrice);
+        vnPayPayment.setVnpOrderInfo(orderInfo);
+        vnPayPayment.setVnpPayDate(paymentTime);
+        vnPayPayment.setVnpTransactionNo(transactionId);
+        vnPayPaymentService.addVnPayPayment(vnPayPayment);
+
+        if (paymentStatus == 1){
+            member_packageService.addMember_Package(member_package);
+            return "ordersuccess";
+        }else
+            return "orderfail";
+
+//        return paymentStatus == 1 ? "ordersuccess" : "orderfail";
     }
 }
