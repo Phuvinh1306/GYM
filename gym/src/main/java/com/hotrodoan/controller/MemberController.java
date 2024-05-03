@@ -36,14 +36,14 @@ public class MemberController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("")
-    public ResponseEntity<Page<Member>> getAllMember(@RequestParam(defaultValue = "0") int page,
-                                                     @RequestParam(defaultValue = "10") int size,
-                                                     @RequestParam(defaultValue = "id") String sortBy,
-                                                     @RequestParam(defaultValue = "desc") String order) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new ResponseEntity<>(memberService.getAllMember(pageable), HttpStatus.OK);
-    }
+//    @GetMapping("")
+//    public ResponseEntity<Page<Member>> getAllMember(@RequestParam(defaultValue = "0") int page,
+//                                                     @RequestParam(defaultValue = "10") int size,
+//                                                     @RequestParam(defaultValue = "id") String sortBy,
+//                                                     @RequestParam(defaultValue = "desc") String order) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
+//        return new ResponseEntity<>(memberService.getAllMember(pageable), HttpStatus.OK);
+//    }
 
     @PostMapping("/admin/add")
     public ResponseEntity<Member> addMember(@RequestBody Member member) {
@@ -75,8 +75,8 @@ public class MemberController {
         return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<Member>> findMembersByNameContaining(@RequestParam String name,
+    @GetMapping("")
+    public ResponseEntity<Page<Member>> findMembersByNameContaining(@RequestParam(defaultValue = "") String name,
                                                                         @RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "10") int size,
                                                                         @RequestParam(defaultValue = "id") String sortBy,

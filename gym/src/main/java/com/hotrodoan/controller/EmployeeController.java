@@ -21,14 +21,14 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping("")
-    public ResponseEntity<Page<Employee>> getAllEmployee(@RequestParam(defaultValue = "0") int page,
-                                                         @RequestParam(defaultValue = "10") int size,
-                                                         @RequestParam(defaultValue = "id") String sortBy,
-                                                         @RequestParam(defaultValue = "desc") String order) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new  ResponseEntity<>(employeeService.getAllEmployee(pageable), HttpStatus.OK);
-    }
+//    @GetMapping("")
+//    public ResponseEntity<Page<Employee>> getAllEmployee(@RequestParam(defaultValue = "0") int page,
+//                                                         @RequestParam(defaultValue = "10") int size,
+//                                                         @RequestParam(defaultValue = "id") String sortBy,
+//                                                         @RequestParam(defaultValue = "desc") String order) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
+//        return new  ResponseEntity<>(employeeService.getAllEmployee(pageable), HttpStatus.OK);
+//    }
 
     @PostMapping("/add")
     public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
@@ -51,14 +51,14 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.getEmployee(id), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<Employee>> findEmployeesByNameContaining(@RequestParam String keyword,
+    @GetMapping("")
+    public ResponseEntity<Page<Employee>> findEmployeesByNameContaining(@RequestParam(defaultValue = "") String name,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size,
                                                                        @RequestParam(defaultValue = "id") String sortBy,
                                                                        @RequestParam(defaultValue = "desc") String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        Page<Employee> employees = employeeService.findEmployeesByNameContaining(keyword, pageable);
+        Page<Employee> employees = employeeService.findEmployeesByNameContaining(name, pageable);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 }

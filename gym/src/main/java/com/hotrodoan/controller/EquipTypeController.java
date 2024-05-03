@@ -22,14 +22,14 @@ public class EquipTypeController {
     @Autowired
     private EquipTypeService equipTypeService;
 
-    @GetMapping("")
-    public ResponseEntity<Page<EquipType>> getAllEquipType(@RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @RequestParam(defaultValue = "id") String sortBy,
-                                                           @RequestParam(defaultValue = "desc") String order) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new ResponseEntity<>(equipTypeService.getAllEquipType(pageable), HttpStatus.OK);
-    }
+//    @GetMapping("")
+//    public ResponseEntity<Page<EquipType>> getAllEquipType(@RequestParam(defaultValue = "0") int page,
+//                                                           @RequestParam(defaultValue = "10") int size,
+//                                                           @RequestParam(defaultValue = "id") String sortBy,
+//                                                           @RequestParam(defaultValue = "desc") String order) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
+//        return new ResponseEntity<>(equipTypeService.getAllEquipType(pageable), HttpStatus.OK);
+//    }
 
     @PostMapping("/add")
     public ResponseEntity<EquipType> addEquipType(@RequestBody EquipType equipType) {
@@ -52,8 +52,8 @@ public class EquipTypeController {
         return new ResponseEntity<>(equipTypeService.getEquipType(id), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<EquipType>> findEmployeesByNameContaining(@RequestParam String name,
+    @GetMapping("")
+    public ResponseEntity<Page<EquipType>> findEmployeesByNameContaining(@RequestParam(defaultValue = "") String name,
                                                                         @RequestParam(defaultValue = "0") int page,
                                                                         @RequestParam(defaultValue = "10") int size,
                                                                         @RequestParam(defaultValue = "id") String sortBy,
