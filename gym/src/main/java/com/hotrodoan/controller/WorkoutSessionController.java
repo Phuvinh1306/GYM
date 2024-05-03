@@ -22,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/workout-sessions")
+@CrossOrigin(origins = "*")
 public class WorkoutSessionController {
     @Autowired
     private WorkoutSessionService workoutSessionService;

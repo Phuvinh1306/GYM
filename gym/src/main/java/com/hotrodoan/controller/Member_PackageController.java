@@ -9,6 +9,7 @@ import com.hotrodoan.security.jwt.JwtTokenFilter;
 import com.hotrodoan.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +18,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
+@SessionAttributes("m_p")
 @RequestMapping("/member_packages")
+@CrossOrigin(origins = "*")
 public class Member_PackageController {
     @Autowired
     private JwtProvider jwtProvider;
@@ -42,9 +44,6 @@ public class Member_PackageController {
 
     @Autowired
     private VNPayService vnPayService;
-
-    @Autowired
-    private HttpSession httpSession;
 
     @GetMapping("/admin/all")
     public ResponseEntity<Page<Member_Package>> getAllMember_Package(@RequestParam(defaultValue = "0") int page,
@@ -74,7 +73,7 @@ public class Member_PackageController {
     }
 
     @PostMapping("/add")
-    public String addMember_Package(HttpServletRequest request, @RequestBody Member_Package member_package) {
+    public String addMember_Package(HttpServletRequest request, HttpSession session, @RequestBody Member_Package member_package) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
@@ -84,13 +83,26 @@ public class Member_PackageController {
         Long packId = pack.getId();
         Package pack1 = packageService.getPackage(packId);
         int totalPrice = pack1.getPrice() * member_package.getQuantity();
-        httpSession.setAttribute("member_package", member_package);
+        long millis = System.currentTimeMillis();
+
+        Member_Package m_p = new Member_Package();
+        m_p.setId(millis);
+        m_p.setMember(member);
+        m_p.setPack(pack);
+        m_p.setQuantity(member_package.getQuantity());
+        m_p.setStartDate(member_package.getStartDate());
+        session.setAttribute("m_p", m_p);
         String packName = pack1.getName();
 //        return new ResponseEntity<>(member_packageService.addMember_Package(member_package), HttpStatus.OK);
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String vnpayUrl = vnPayService.createOrder(totalPrice, "Thanh toán gói "+packName, baseUrl);
+        String vnpayUrl = vnPayService.createOrder(totalPrice, "Pay for "+packName, baseUrl);
         return vnpayUrl;
     }
+
+//    @GetMapping("/invoke-controller-vnpay")
+//    public ResponseEntity<String> invokeControllerB() {
+//        return controller.getSessionAttribute();
+//    }
 
     @PutMapping("admin/update/{id}")
     public ResponseEntity<Member_Package> updateMember_Package(@RequestBody Member_Package member_package, @PathVariable Long id){

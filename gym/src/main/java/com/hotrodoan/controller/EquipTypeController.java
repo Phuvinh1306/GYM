@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/equip-types")
+@CrossOrigin(origins = "*")
 public class EquipTypeController {
     @Autowired
     private EquipTypeService equipTypeService;

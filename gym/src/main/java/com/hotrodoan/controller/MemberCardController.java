@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/member-cards")
+@CrossOrigin(origins = "*")
 public class MemberCardController {
     @Autowired
     private MemberCardService memberCardService;

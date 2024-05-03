@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/positions")
+@CrossOrigin(origins = "*")
 public class PositionController {
     @Autowired
     private PositionService positionService;
