@@ -27,6 +27,7 @@ public class MemberCardServiceImpl implements MemberCardService {
     @Override
     public MemberCard updateMemberCard(MemberCard memberCard, Long id) {
         return memberCardRepository.findById(id).map(mc -> {
+            mc.setName(memberCard.getName());
             mc.setStartDay(memberCard.getStartDay());
             mc.setEndDay(memberCard.getEndDay());
             return memberCardRepository.save(mc);

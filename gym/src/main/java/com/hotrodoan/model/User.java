@@ -29,7 +29,6 @@ public class User{
 
     @Column(nullable = false)
     @Size(min = 6)
-    @JsonIgnore
     private String password;
 
     @Column(nullable = false, unique = true)

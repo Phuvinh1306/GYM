@@ -4,6 +4,7 @@ import com.hotrodoan.model.User;
 import com.hotrodoan.repository.UserRepository;
 import com.hotrodoan.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -12,6 +13,9 @@ import java.util.Optional;
 public class ProfileServiceImpl implements ProfileService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Optional<User> getProfile(String username) {
@@ -22,12 +26,28 @@ public class ProfileServiceImpl implements ProfileService {
     public User updateProfile(User user, Long id) {
         return userRepository.findById(id).map(us -> {
             us.setName(user.getName());
+            us.setUsername(user.getUsername());
             us.setEmail(user.getEmail());
-//            us.setPhone(user.getPhone());
-//            us.setAddress(user.getAddress());
+            us.setAvatar(user.getAvatar());
+            return userRepository.save(us);
+        }).orElse(null);
+    }
+
+    @Override
+    public User changePassword(User user, Long id) {
+        return userRepository.findById(id).map(us -> {
+//            us.setPassword(passwordEncoder.encode(password));
+//            us.setName(user.getName());
+//            us.setUsername(user.getUsername());
+            us.setPassword(passwordEncoder.encode(user.getPassword()));
+//            us.setEmail(user.getEmail());
 //            us.setAvatar(user.getAvatar());
             return userRepository.save(us);
         }).orElse(null);
     }
 
+    @Override
+    public void deleteProfile(Long id) {
+        userRepository.deleteById(id);
+    }
 }

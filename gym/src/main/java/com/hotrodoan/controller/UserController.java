@@ -21,23 +21,24 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("")
-    public ResponseEntity<Page<User>> getAllUser(@RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<User>> getAllUser(@RequestParam(defaultValue = "") String keyword,
+                                                 @RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "10") int size,
                                                  @RequestParam(defaultValue = "id") String sortBy,
                                                  @RequestParam(defaultValue = "desc") String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new  ResponseEntity<>(userService.getAllUser(pageable), HttpStatus.OK);
+        return new  ResponseEntity<>(userService.searchUserByKeyword(keyword, pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<Page<User>> findUser(@RequestParam String keyword,
-                                               @RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "10") int size,
-                                               @RequestParam(defaultValue = "id") String sortBy,
-                                               @RequestParam(defaultValue = "desc") String order) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new ResponseEntity<>(userService.searchUserByKeyword(keyword, pageable), HttpStatus.OK);
-    }
+//    @GetMapping("/search")
+//    public ResponseEntity<Page<User>> findUser(@RequestParam String keyword,
+//                                               @RequestParam(defaultValue = "0") int page,
+//                                               @RequestParam(defaultValue = "10") int size,
+//                                               @RequestParam(defaultValue = "id") String sortBy,
+//                                               @RequestParam(defaultValue = "desc") String order) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
+//        return new ResponseEntity<>(userService.searchUserByKeyword(keyword, pageable), HttpStatus.OK);
+//    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {

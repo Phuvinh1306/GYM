@@ -42,7 +42,7 @@ public class Employee {
 
     private String address;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy' 'HH:mm:ss")
     private Date startWork;
 
     private String sex;
