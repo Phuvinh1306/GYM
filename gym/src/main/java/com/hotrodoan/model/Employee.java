@@ -45,7 +45,7 @@ public class Employee {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Date startWork;
 
-    private boolean sex;
+    private String sex;
 
     @Lob
     private String avatar = "https://firebasestorage.googleapis.com/v0/b/lvkmusic.appspot.com/o/umgu5ofe2y?alt=media&token=d9756614-c86c-4269-b46e-8d4b8b2f02d3";

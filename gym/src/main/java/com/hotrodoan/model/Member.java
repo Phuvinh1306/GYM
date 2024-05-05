@@ -39,15 +39,15 @@ public class Member{
     @Pattern(regexp = "\\d{12}", message = "CCCD phải bao gồm 12 chữ số")
     private String cccd;
 
-    private boolean sex;
+    private String sex;
 
     private boolean status = false;
 
     @Lob
     private String avatar = "https://firebasestorage.googleapis.com/v0/b/lvkmusic.appspot.com/o/umgu5ofe2y?alt=media&token=d9756614-c86c-4269-b46e-8d4b8b2f02d3";
 
-    @OneToOne
-    @JoinColumn(name = "membercard_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "membercard_id")
     private MemberCard memberCard;
 
 //    @ManyToMany(mappedBy = "member")

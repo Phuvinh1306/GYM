@@ -49,7 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             ep.setEmail(employee.getEmail());
             ep.setAddress(employee.getAddress());
             ep.setStartWork(employee.getStartWork());
-            ep.setSex(employee.isSex());
+            ep.setSex(employee.getSex());
             ep.setAvatar(employee.getAvatar());
             return employeeRepository.save(ep);
         }).orElseThrow(() -> new EmployeeNotfoundException("Không tìm thấy nhân viên"));
@@ -68,5 +68,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Page<Employee> findEmployeesByNameContaining(String name, Pageable pageable) {
         return employeeRepository.findByNameContaining(name, pageable);
+    }
+
+    @Override
+    public List<Employee> findEmployeesByPositionId(Long positionId) {
+        return employeeRepository.findByPositionId(positionId);
     }
 }

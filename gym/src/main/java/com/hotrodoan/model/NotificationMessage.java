@@ -1,30 +1,30 @@
 package com.hotrodoan.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.util.Map;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-public class Notification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Entity
+public class NotificationMessage {
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+    private String recipientToken;
 
     @Column(nullable = false)
     @Size(min = 1, message = "Title must not be empty")
     private String title;
     @Size(min = 1, message = "Content must not be empty")
-    private String content;
+    private String body;
     @Lob
-    private String fileName;
-    @JsonFormat(pattern = "dd-MM-yyyy")
-    private Date sentDate = new Date();
+    private String image;
+
+    private Map<String, String> data;
 }

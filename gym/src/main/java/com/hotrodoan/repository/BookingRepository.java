@@ -31,5 +31,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                  @Param("bookingTime") Date bookingTime,
                                                  @Param("endTime") Date endTime);
 
+    @Query("SELECT e FROM Employee e " +
+            "WHERE e.position.id = 2 " +
+            "AND NOT EXISTS (" +
+            "    SELECT b FROM Booking b " +
+            "    WHERE b.employee = e " +
+            "    AND ((b.bookingTime <= :endTime AND b.endTime >= :bookingTime) " +
+            "    OR (b.bookingTime >= :bookingTime AND b.bookingTime <= :endTime))" +
+            ")")
+    List<Employee> findEmployeesWithNoBookingInTimeRange(@Param("bookingTime") Date bookingTime,
+                                                         @Param("endTime") Date endTime);
+
+
     List<Booking> findByEndTimeBefore(Timestamp currentTime);
 }

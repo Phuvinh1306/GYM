@@ -50,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
             mb.setEmail(member.getEmail());
             mb.setPhone(member.getPhone());
             mb.setCccd(member.getCccd());
-            mb.setSex(member.isSex());
+            mb.setSex(member.getSex());
             mb.setStatus(member.isStatus());
             mb.setAvatar(member.getAvatar());
             mb.setMemberCard(member.getMemberCard());

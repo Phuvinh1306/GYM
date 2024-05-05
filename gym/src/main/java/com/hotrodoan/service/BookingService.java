@@ -26,6 +26,9 @@ public interface BookingService {
     List<Booking> findByEndTimeBefore(Timestamp currentTime);
 
     Page<Booking> findBookingByMemberId(Long memberId, Pageable pageable);
+    List<Employee> findEmployeesWithNoBookingInTimeRange(Date bookingTime, Date endTime);
+
+//    List<Employee> findEmployeeByBookingTimeBetween(Date start, Date end);
 //    Booking getBookingById(Long id);
 //    List<Booking> getBookingByMember(Member member);
 //    List<Booking> getBookingByEmployeeId(Long employeeId);

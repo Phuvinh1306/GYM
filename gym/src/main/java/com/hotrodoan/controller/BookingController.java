@@ -18,10 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -70,7 +72,7 @@ public class BookingController {
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<?> addBooking(HttpServletRequest request, @RequestBody Booking booking) {
         if (employeeService.existsByIdAndPositionId(booking.getEmployee().getId(), 2L)){
             String jwt = jwtTokenFilter.getJwt(request);
@@ -85,7 +87,13 @@ public class BookingController {
         }
     }
 
-    @PostMapping("admin/add")
+    @GetMapping("/add")
+    public ResponseEntity<?> allEmployeePTCanBooking(@RequestParam("bookingTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date bookingTime,
+                                                     @RequestParam("endTime") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime) {
+        return new ResponseEntity<>(bookingService.findEmployeesWithNoBookingInTimeRange(bookingTime, endTime), HttpStatus.OK);
+    }
+
+    @PostMapping("/admin/add")
     public ResponseEntity<?> addBooking(@RequestBody Booking booking) {
         if (employeeService.existsByIdAndPositionId(booking.getEmployee().getId(), 2L)){
             return new ResponseEntity<>(bookingService.addBooking(booking), HttpStatus.OK);
@@ -95,13 +103,13 @@ public class BookingController {
         }
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteBooking(@PathVariable Long id) {
         bookingService.deleteBooking(id);
         return new ResponseEntity<>(new ResponseMessage("deleted"), HttpStatus.OK);
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateBooking(HttpServletRequest request, @PathVariable Long id, @RequestBody Booking booking) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);

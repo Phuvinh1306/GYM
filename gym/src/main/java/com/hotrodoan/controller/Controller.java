@@ -43,8 +43,10 @@ public class Controller {
     public String GetMapping(HttpServletRequest request, Model model){
         int paymentStatus =vnPayService.orderReturn(request);
 
-        Object obj = request.getSession().getAttribute("m_p");
-        Member_Package m_p = (Member_Package) obj;
+//        Object obj = request.getSession().getAttribute("m_p");
+//        Member_Package m_p = (Member_Package) obj;
+        HttpSession session = request.getSession();
+        Member_Package m_p = (Member_Package) session.getAttribute("m_p");
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String paymentTime = request.getParameter("vnp_PayDate");

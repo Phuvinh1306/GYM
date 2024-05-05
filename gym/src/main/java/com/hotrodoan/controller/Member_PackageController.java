@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @SessionAttributes("m_p")
@@ -73,7 +74,7 @@ public class Member_PackageController {
     }
 
     @PostMapping("/add")
-    public String addMember_Package(HttpServletRequest request, HttpSession session, @RequestBody Member_Package member_package) {
+    public String addMember_Package(HttpServletRequest request, @RequestBody Member_Package member_package, HttpSession session) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
@@ -83,10 +84,10 @@ public class Member_PackageController {
         Long packId = pack.getId();
         Package pack1 = packageService.getPackage(packId);
         int totalPrice = pack1.getPrice() * member_package.getQuantity();
-        long millis = System.currentTimeMillis();
+//        long millis = System.currentTimeMillis();
 
         Member_Package m_p = new Member_Package();
-        m_p.setId(millis);
+//        m_p.setId(millis);
         m_p.setMember(member);
         m_p.setPack(pack);
         m_p.setQuantity(member_package.getQuantity());
@@ -96,13 +97,9 @@ public class Member_PackageController {
 //        return new ResponseEntity<>(member_packageService.addMember_Package(member_package), HttpStatus.OK);
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String vnpayUrl = vnPayService.createOrder(totalPrice, "Pay for "+packName, baseUrl);
+//        return new RedirectView(vnpayUrl);
         return vnpayUrl;
     }
-
-//    @GetMapping("/invoke-controller-vnpay")
-//    public ResponseEntity<String> invokeControllerB() {
-//        return controller.getSessionAttribute();
-//    }
 
     @PutMapping("admin/update/{id}")
     public ResponseEntity<Member_Package> updateMember_Package(@RequestBody Member_Package member_package, @PathVariable Long id){

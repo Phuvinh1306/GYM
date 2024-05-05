@@ -120,4 +120,9 @@ public class BookingServiceImpl implements BookingService {
     public Page<Booking> findBookingByMemberId(Long memberId, Pageable pageable) {
         return bookingRepository.findByMemberId(memberId, pageable);
     }
+
+    @Override
+    public List<Employee> findEmployeesWithNoBookingInTimeRange(Date bookingTime, Date endTime) {
+        return bookingRepository.findEmployeesWithNoBookingInTimeRange(bookingTime, endTime);
+    }
 }
