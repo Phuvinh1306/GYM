@@ -28,10 +28,6 @@ public class Member{
     private String name;
 
     @Column(unique = true, nullable = false)
-    @Email
-    private String email;
-
-    @Column(unique = true, nullable = false)
     @Pattern(regexp = "(\\d{4}[-.]?\\d{3}[-.]?\\d{3})", message = "Số điện thoại phải bao gồm 10 chữ số và có thể có dấu chấm hoặc dấu gạch ngang giữa các phần tử")
     private String phone;
 
@@ -42,13 +38,6 @@ public class Member{
     private String sex;
 
     private boolean status = false;
-
-    @Lob
-    private String avatar = "https://firebasestorage.googleapis.com/v0/b/lvkmusic.appspot.com/o/umgu5ofe2y?alt=media&token=d9756614-c86c-4269-b46e-8d4b8b2f02d3";
-
-    @ManyToOne
-    @JoinColumn(name = "membercard_id")
-    private MemberCard memberCard;
 
 //    @ManyToMany(mappedBy = "member")
 //    private Set<Member_Package> memberPackages = new HashSet<>();

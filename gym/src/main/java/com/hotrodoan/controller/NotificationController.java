@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/notifications")
 public class NotificationController {
-    @Autowired
-    FirebaseMessagingService firebaseMessagingService;
+    // @Autowired
+    // FirebaseMessagingService firebaseMessagingService;
 
-    @PostMapping
-    public String sendNotificationByToken(@RequestBody NotificationMessage notificationMessage){
-        return firebaseMessagingService.sendNotificationByToken(notificationMessage);
-    }
+    // @PostMapping
+    // public String sendNotificationByToken(@RequestBody NotificationMessage notificationMessage){
+    //     return firebaseMessagingService.sendNotificationByToken(notificationMessage);
+    // }
 }

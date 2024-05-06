@@ -17,17 +17,17 @@ import java.io.IOException;
 @EnableScheduling
 @CrossOrigin(origins = "*")
 public class GymApplication {
-	@Bean
-	FirebaseMessaging firebaseMessaging() throws IOException {
-		GoogleCredentials googleCredentials = GoogleCredentials
-				.fromStream(new ClassPathResource("firebase-service-notification.json").getInputStream());
+	// @Bean
+	// FirebaseMessaging firebaseMessaging() throws IOException {
+	// 	GoogleCredentials googleCredentials = GoogleCredentials
+	// 			.fromStream(new ClassPathResource("firebase-service-notification.json").getInputStream());
 
-		FirebaseOptions firebaseOptions = FirebaseOptions.builder()
-				.setCredentials(googleCredentials).build();
+	// 	FirebaseOptions firebaseOptions = FirebaseOptions.builder()
+	// 			.setCredentials(googleCredentials).build();
 
-		FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "gym-app");
-		return FirebaseMessaging.getInstance(app);
-	}
+	// 	FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "gym-app");
+	// 	return FirebaseMessaging.getInstance(app);
+	// }
 
 	public static void main(String[] args) {
 		SpringApplication.run(GymApplication.class, args);

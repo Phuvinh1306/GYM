@@ -47,13 +47,10 @@ public class MemberServiceImpl implements MemberService {
     public Member updateMember(Member member, Long id) {
         return memberRepository.findById(id).map(mb -> {
             mb.setName(member.getName());
-            mb.setEmail(member.getEmail());
             mb.setPhone(member.getPhone());
             mb.setCccd(member.getCccd());
             mb.setSex(member.getSex());
             mb.setStatus(member.isStatus());
-            mb.setAvatar(member.getAvatar());
-            mb.setMemberCard(member.getMemberCard());
             mb.setUser(member.getUser());
 
 //            Set<Package> packages = new HashSet<>(member.getPackages());
