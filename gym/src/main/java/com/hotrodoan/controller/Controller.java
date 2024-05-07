@@ -7,6 +7,11 @@ import com.hotrodoan.service.VNPayService;
 import com.hotrodoan.service.VnPayPaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -58,15 +63,22 @@ public class Controller {
         model.addAttribute("paymentTime", paymentTime);
         model.addAttribute("transactionId", transactionId);
 
-        VnPayPayment vnPayPayment = new VnPayPayment();
-        vnPayPayment.setVnpAmount(totalPrice);
-        vnPayPayment.setVnpOrderInfo(orderInfo);
-        vnPayPayment.setVnpPayDate(paymentTime);
-        vnPayPayment.setVnpTransactionNo(transactionId);
-        vnPayPaymentService.addVnPayPayment(vnPayPayment);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        try {
+            Date date = dateFormat.parse(paymentTime);
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+            VnPayPayment vnPayPayment = new VnPayPayment();
+            vnPayPayment.setVnpAmount(totalPrice);
+            vnPayPayment.setVnpOrderInfo(orderInfo);
+            vnPayPayment.setVnpPayDate(sqlDate);
+            vnPayPayment.setVnpTransactionNo(transactionId);
+            vnPayPaymentService.addVnPayPayment(vnPayPayment);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         if (paymentStatus == 1){
-            member_packageService.addMember_Package(m_p);
+//            member_packageService.addMember_Package(m_p);
             return "ordersuccess";
         }else
             return "orderfail";

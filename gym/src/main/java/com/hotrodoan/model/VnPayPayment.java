@@ -1,5 +1,7 @@
 package com.hotrodoan.model;
 
+import java.sql.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +24,7 @@ public class VnPayPayment {
     private String vnpBankTranNo;
     private String vnpCardType;
     private String vnpOrderInfo;
-    private String vnpPayDate;
+    private Date vnpPayDate;
     private String vnpResponseCode;
     private String vnpTmnCode;
     private String vnpTransactionNo;
