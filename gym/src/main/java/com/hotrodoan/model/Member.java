@@ -36,8 +36,6 @@ public class Member{
 
     private String sex;
 
-    private boolean status = false;
-
 //    @ManyToMany(mappedBy = "member")
 //    private Set<Member_Package> memberPackages = new HashSet<>();
 

@@ -43,6 +43,7 @@ public class PackageServiceImpl implements PackageService {
             p.setName(pack.getName());
             p.setPrice(pack.getPrice());
             p.setDuration(pack.getDuration());
+            p.setImage(pack.getImage());
             return packageRepository.save(p);
         }).orElseThrow(() -> new RuntimeException("Không tìm thấy gói dịch vụ"));
     }

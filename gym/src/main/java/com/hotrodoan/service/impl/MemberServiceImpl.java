@@ -50,7 +50,6 @@ public class MemberServiceImpl implements MemberService {
             mb.setPhone(member.getPhone());
             mb.setCccd(member.getCccd());
             mb.setSex(member.getSex());
-            mb.setStatus(member.isStatus());
             mb.setUser(member.getUser());
 
 //            Set<Package> packages = new HashSet<>(member.getPackages());

@@ -59,8 +59,7 @@ public class Employee {
         createdAt = new Date();
     }
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "position_id")
     private Position position;
 }
