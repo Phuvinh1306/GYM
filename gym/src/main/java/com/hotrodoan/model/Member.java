@@ -23,15 +23,14 @@ public class Member{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     @Size(min = 3, max = 150)
     private String name;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     @Pattern(regexp = "(\\d{4}[-.]?\\d{3}[-.]?\\d{3})", message = "Số điện thoại phải bao gồm 10 chữ số và có thể có dấu chấm hoặc dấu gạch ngang giữa các phần tử")
     private String phone;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     @Pattern(regexp = "\\d{12}", message = "CCCD phải bao gồm 12 chữ số")
     private String cccd;
 
@@ -50,7 +49,7 @@ public class Member{
     private User user;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", updatable = false)
     private Date createdAt;
 
     @PrePersist

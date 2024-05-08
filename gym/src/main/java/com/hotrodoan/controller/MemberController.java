@@ -50,14 +50,14 @@ public class MemberController {
         return new ResponseEntity<>(memberService.addMember(member), HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<Member> addMember(HttpServletRequest request, @RequestBody Member member) {
-        String jwt = jwtTokenFilter.getJwt(request);
-        String username = jwtProvider.getUsernameFromToken(jwt);
-        User user = userService.findByUsername(username).orElseThrow();
-        member.setUser(user);
-        return new ResponseEntity<>(memberService.addMember(member), HttpStatus.OK);
-    }
+//    @PostMapping("/add")
+//    public ResponseEntity<Member> addMember(HttpServletRequest request, @RequestBody Member member) {
+//        String jwt = jwtTokenFilter.getJwt(request);
+//        String username = jwtProvider.getUsernameFromToken(jwt);
+//        User user = userService.findByUsername(username).orElseThrow();
+//        member.setUser(user);
+//        return new ResponseEntity<>(memberService.addMember(member), HttpStatus.OK);
+//    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Member> updateMember(@RequestBody Member member, @PathVariable Long id){

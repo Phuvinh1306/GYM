@@ -18,7 +18,4 @@ public class Position {
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    @OneToMany(mappedBy = "position", fetch = FetchType.EAGER)
-    private List<Employee> employees;
 }

@@ -1,5 +1,7 @@
 package com.hotrodoan.controller;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.hotrodoan.dto.request.LoginForm;
 import com.hotrodoan.dto.request.SignupForm;
 import com.hotrodoan.dto.response.JwtResponse;
@@ -19,12 +21,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -46,6 +52,9 @@ public class AuthController {
 
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
+
+//    @Autowired
+//    private FirebaseAuth firebaseAuth;
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(@Valid @RequestBody SignupForm signupForm){
@@ -97,6 +106,16 @@ public class AuthController {
         UserDetail userDetail = (UserDetail) authentication.getPrincipal();
         return ResponseEntity.ok(new JwtResponse(token, userDetail.getId(), userDetail.getName(), userDetail.getAuthorities(), userDetail.getAvatar()));
     }
+
+//    @GetMapping("/token")
+//    public Map<String, String> getToken() throws FirebaseAuthException {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String authorities = authentication.getAuthorities()
+//                .stream().map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.joining(","));
+//        String customToken = firebaseAuth.createCustomToken("thovuavua", Collections.singletonMap("authorities", authorities));
+//        return Collections.singletonMap("token", customToken);
+//    }
 
 //    @PutMapping("/change-avatar")
 //    public ResponseEntity<?> changeAvatar(HttpServletRequest request, @Valid @RequestBody ChangeAvatar changeAvatar){
