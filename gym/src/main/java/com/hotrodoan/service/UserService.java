@@ -18,4 +18,6 @@ public interface UserService {
     Page<User> getAllUser(Pageable pageable);
     Page<User> searchUserByKeyword(String keyword, Pageable pageable);
     void deleteUser(Long id);
+
+    public boolean verify(String verificationCode);
 }

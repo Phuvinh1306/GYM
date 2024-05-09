@@ -52,4 +52,15 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.deleteById(id);
     }
+
+    @Override
+    public boolean verify(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode);
+        if (user == null || user.isEnabled()) {
+            return false;
+        }else {
+            userRepository.enableUser(user.getId());
+            return true;
+        }
+    }
 }

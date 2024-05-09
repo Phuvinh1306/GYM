@@ -2,6 +2,7 @@ package com.hotrodoan.controller;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.hotrodoan.config.Utility;
 import com.hotrodoan.dto.request.LoginForm;
 import com.hotrodoan.dto.request.SignupForm;
 import com.hotrodoan.dto.response.JwtResponse;
@@ -14,10 +15,16 @@ import com.hotrodoan.security.jwt.JwtTokenFilter;
 import com.hotrodoan.security.userdetail.UserDetail;
 import com.hotrodoan.service.RoleService;
 import com.hotrodoan.service.UserService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,7 +32,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import net.bytebuddy.utility.RandomString;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,11 +62,14 @@ public class AuthController {
     @Autowired
     private JwtTokenFilter jwtTokenFilter;
 
+    @Autowired
+    private JavaMailSender javaMailSender;
+
 //    @Autowired
 //    private FirebaseAuth firebaseAuth;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@Valid @RequestBody SignupForm signupForm){
+    public ResponseEntity<?> register(@Valid @RequestBody SignupForm signupForm, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
         if(userService.existsByUsername(signupForm.getUsername())){
             return new ResponseEntity<>(new ResponseMessage("username_exists"), HttpStatus.OK);
         }
@@ -92,8 +104,47 @@ public class AuthController {
         }
 //        roles.add(roleService.findByName(RoleName.USER).orElseThrow(() -> new RuntimeException("Role not found")));
         user.setRoles(roles);
+        user.setEnabled(false);
+
+        String randomCode = RandomString.make(64);
+        user.setVerificationCode(randomCode);
+
         userService.save(user);
+
+        String siteURL = Utility.getSiteURL(request);
+        sendVertificationEmail(user, siteURL);
         return new ResponseEntity<>(new ResponseMessage("create_success"), HttpStatus.OK);
+    }
+
+    private void sendVertificationEmail(User user, String siteURL) throws MessagingException, UnsupportedEncodingException {
+        String subject = "Please verify your registration";
+        String senderName = "Hotrodoan";
+
+        String mailContent = "Dear " + user.getName() + ",<br>";
+        mailContent += "Please click the link below to verify your registration:<br>";
+        String verifyURL = siteURL + "/verify?code=" + user.getVerificationCode();
+        mailContent += "<h3><a href='" + verifyURL + "'>Verify</a></h3>";
+        mailContent += "Thank you!";
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setFrom("admingrgym", senderName);
+        helper.setTo(user.getEmail());
+        helper.setSubject(subject);
+        helper.setText(mailContent, true);
+        javaMailSender.send(message);
+//                + "Please click the link below to verify your registration:<br>"
+//                + "<h3><a href='http://localhost:8080/verify?code=" + user.getVerificationCode() + "'>Verify</a></h3>"
+//                + "Thank you!";
+//        userService.sendEmail(user.getEmail(), subject, mailContent);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyUser(@RequestParam("code") String code){
+        boolean verified = userService.verify(code);
+//        String pageTitle = verified ? "Verification Success" : "Verification Failed";
+        String message = verified ? "Your account has been verified. You can now login." : "Verification failed. Please contact the administrator.";
+        return new ResponseEntity<>(new ResponseMessage(message), HttpStatus.OK);
+//        return message;
     }
 
     @PostMapping("/login")
@@ -101,10 +152,23 @@ public class AuthController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginForm.getUsername(), loginForm.getPassword())
         );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtProvider.createToken(authentication);
+
+        // Lấy thông tin người dùng từ Principal
         UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-        return ResponseEntity.ok(new JwtResponse(token, userDetail.getId(), userDetail.getName(), userDetail.getAuthorities(), userDetail.getAvatar()));
+        System.out.println(userDetail.getAuthorities());
+
+        // Kiểm tra trạng thái enabled của người dùng
+        if (!userDetail.isEnabled()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("User is not enabled. Please contact administrator.");
+        }else {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String token = jwtProvider.createToken(authentication);
+//            UserDetail userDetail = (UserDetail) authentication.getPrincipal();
+            return ResponseEntity.ok(new JwtResponse(token, userDetail.getId(), userDetail.getName(), userDetail.getAuthorities(), userDetail.getAvatar()));
+        }
+
+
     }
 
     

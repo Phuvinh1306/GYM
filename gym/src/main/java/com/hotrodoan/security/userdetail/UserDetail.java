@@ -20,11 +20,12 @@ public class UserDetail implements UserDetails {
     private String password;
     private String email;
     private String avatar;
+    private boolean enabled;
     private Collection<? extends GrantedAuthority> roles;
 
     public static UserDetail build(User user){
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
-        return new UserDetail(user.getId(), user.getName(), user.getUsername(), user.getPassword(), user.getEmail(), user.getAvatar(), authorities);
+        return new UserDetail(user.getId(), user.getName(), user.getUsername(), user.getPassword(), user.getEmail(), user.getAvatar(), user.isEnabled(), authorities);
     }
 
     @Override
@@ -59,6 +60,6 @@ public class UserDetail implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 }
