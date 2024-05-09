@@ -13,13 +13,21 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @RestController
 @RequestMapping("/packages")
 @CrossOrigin(origins = "*")
 public class PackageController {
+    private static final Path UPLOAD_DIR = Paths.get(System.getProperty("user.dir"), "/src/main/resources/static/images/package");
+
     @Autowired
     private PackageService packageService;
 
@@ -32,8 +40,21 @@ public class PackageController {
 //        return new ResponseEntity<>(packageService.getAllPackage(pageable), HttpStatus.OK);
 //    }
 
+    // @PostMapping("/add")
+    // public ResponseEntity<Package> addPackage(@RequestBody Package pack) {
+    //     return new ResponseEntity<>(packageService.addPackage(pack), HttpStatus.OK);
+    // }
     @PostMapping("/add")
-    public ResponseEntity<Package> addMember(@RequestBody Package pack) {
+    public ResponseEntity<Package> addPackage(@RequestParam("image") MultipartFile image, @RequestParam("name") String name, @RequestParam("price") int price) throws IOException {
+        String originalFilename = image.getOriginalFilename();
+        Path filePath = UPLOAD_DIR.resolve(originalFilename);
+        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        String imagePath = "/src/main/resources/static/images/package/" + originalFilename;
+
+        Package pack = new Package();
+        pack.setName(name);
+        pack.setPrice(price);
+        pack.setImage(imagePath);
         return new ResponseEntity<>(packageService.addPackage(pack), HttpStatus.OK);
     }
 
