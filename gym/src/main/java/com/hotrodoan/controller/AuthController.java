@@ -107,6 +107,8 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(token, userDetail.getId(), userDetail.getName(), userDetail.getAuthorities(), userDetail.getAvatar()));
     }
 
+    
+
 //    @GetMapping("/token")
 //    public Map<String, String> getToken() throws FirebaseAuthException {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

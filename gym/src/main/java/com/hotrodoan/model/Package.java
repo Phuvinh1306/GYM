@@ -25,7 +25,4 @@ public class Package{
     private int price;
     private int duration;
     private String image;
-
-//    @OneToMany(mappedBy = "pack", fetch = FetchType.EAGER)
-//    private List<Member_Package> memberPackages;
 }

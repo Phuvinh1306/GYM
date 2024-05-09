@@ -5,6 +5,8 @@ import com.hotrodoan.model.Position;
 import com.hotrodoan.repository.PositionRepository;
 import com.hotrodoan.service.PositionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,5 +45,10 @@ public class PositionServiceImpl implements PositionService {
             po.setName(position.getName());
             return positionRepository.save(po);
         }).orElseThrow(() -> new PositionNotFoundException("Không tìm thấy chức vụ"));
+    }
+
+    @Override
+    public Page<Position> searchPosition(String name, Pageable pageable) {
+        return positionRepository.findByNameContaining(name, pageable);
     }
 }

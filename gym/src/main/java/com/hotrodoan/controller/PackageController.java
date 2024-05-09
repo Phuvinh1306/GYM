@@ -2,6 +2,7 @@ package com.hotrodoan.controller;
 
 import com.hotrodoan.dto.response.ResponseMessage;
 import com.hotrodoan.model.Employee;
+import com.hotrodoan.model.Image;
 import com.hotrodoan.model.Package;
 import com.hotrodoan.service.PackageService;
 import org.springframework.beans.factory.annotation.Autowired;
