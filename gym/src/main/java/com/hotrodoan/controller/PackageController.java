@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.SecureRandom;
 import java.util.List;
 
 @RestController
@@ -45,11 +46,18 @@ public class PackageController {
     //     return new ResponseEntity<>(packageService.addPackage(pack), HttpStatus.OK);
     // }
     @PostMapping("/add")
-    public ResponseEntity<Package> addPackage(@RequestParam("image") MultipartFile image, @RequestParam("name") String name, @RequestParam("price") int price) throws IOException {
-        String originalFilename = image.getOriginalFilename();
-        Path filePath = UPLOAD_DIR.resolve(originalFilename);
-        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        String imagePath = "/src/main/resources/static/images/package/" + originalFilename;
+    public ResponseEntity<Package> addPackage(@RequestParam(value = "image", required = false) MultipartFile image, @RequestParam("name") String name, @RequestParam("price") int price) throws IOException {
+        String imagePath;
+        if (image == null || image.isEmpty()) {
+            imagePath = "/src/main/resources/static/images/package/default.png";
+        } else {
+            String originalFilename = image.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+            String newFilename = System.currentTimeMillis() + "_" + new SecureRandom().nextInt() + extension;
+            Path filePath = UPLOAD_DIR.resolve(newFilename);
+            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            imagePath = "/src/main/resources/static/images/package/" + newFilename;
+        }
 
         Package pack = new Package();
         pack.setName(name);
@@ -59,7 +67,23 @@ public class PackageController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Package> updatePackage(@RequestBody Package pack, @PathVariable Long id){
+    public ResponseEntity<Package> updatePackage(@RequestParam("image") MultipartFile image, @RequestParam("name") String name, @RequestParam("price") int price, @PathVariable Long id) throws IOException{
+        String imagePath;
+        if (image.isEmpty()) {
+            imagePath = "/src/main/resources/static/images/package/default.jpg";
+        } else {
+            String originalFilename = image.getOriginalFilename();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+            String newFilename = System.currentTimeMillis() + "_" + new SecureRandom().nextInt() + extension;
+            Path filePath = UPLOAD_DIR.resolve(newFilename);
+            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            imagePath = "/src/main/resources/static/images/package/" + newFilename;
+        }
+
+        Package pack = new Package();
+        pack.setName(name);
+        pack.setPrice(price);
+        pack.setImage(imagePath);
         return new ResponseEntity<>(packageService.updatePackage(pack, id), HttpStatus.OK);
     }
 
@@ -71,7 +95,12 @@ public class PackageController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Package> getPackage(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(packageService.getPackage(id), HttpStatus.OK);
+        Package pack = packageService.getPackage(id);
+        String imagePath = System.getProperty("user.dir") + pack.getImage();
+        imagePath = imagePath.replace("\\", "/");
+        pack.setImage(imagePath);
+        System.out.println(pack.getImage());
+        return new ResponseEntity<>(pack, HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -81,6 +110,12 @@ public class PackageController {
                                                                         @RequestParam(defaultValue = "id") String sortBy,
                                                                         @RequestParam(defaultValue = "desc") String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new ResponseEntity<>(packageService.findPackagesByNameContaining(name, pageable), HttpStatus.OK);
+        Page<Package> packages = packageService.findPackagesByNameContaining(name, pageable);
+        packages.forEach(pack -> {
+            String imagePath = System.getProperty("user.dir") + pack.getImage();
+            imagePath = imagePath.replace("\\", "/");
+            pack.setImage(imagePath);
+        });
+        return new ResponseEntity<>(packages, HttpStatus.OK);
     }
 }
