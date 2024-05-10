@@ -24,5 +24,6 @@ public class Package{
     private String name;
     private int price;
     private int duration;
+    @Column(columnDefinition = "LONGBLOB")
     private String image;
 }
