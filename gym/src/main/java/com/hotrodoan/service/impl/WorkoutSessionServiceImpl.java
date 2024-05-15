@@ -38,4 +38,9 @@ public class WorkoutSessionServiceImpl implements WorkoutSessionService {
     public WorkoutSession getWorkoutSessionByBooking(Booking booking) {
         return workoutSessionRepository.findByBooking(booking);
     }
+
+    @Override
+    public WorkoutSession addWorkoutSession(WorkoutSession workoutSession) {
+        return workoutSessionRepository.save(workoutSession);
+    }
 }

@@ -84,6 +84,7 @@ public class BookingController {
             Booking newBooking = bookingService.addBooking(booking);
             WorkoutSession workoutSession = new WorkoutSession();
             workoutSession.setBooking(newBooking);
+            workoutSessionService.addWorkoutSession(workoutSession);
 
             return new ResponseEntity<>(newBooking, HttpStatus.OK);
         }

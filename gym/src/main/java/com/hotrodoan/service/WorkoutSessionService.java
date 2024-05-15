@@ -11,4 +11,5 @@ public interface WorkoutSessionService {
     Page<WorkoutSession> getAllWorkoutSession(Pageable pageable);
 
     WorkoutSession getWorkoutSessionByBooking(Booking booking);
+    WorkoutSession addWorkoutSession(WorkoutSession workoutSession);
 }
