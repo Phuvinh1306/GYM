@@ -5,12 +5,10 @@ import com.hotrodoan.exception.EmployeeNotfoundException;
 import com.hotrodoan.model.Booking;
 import com.hotrodoan.model.Member;
 import com.hotrodoan.model.User;
+import com.hotrodoan.model.WorkoutSession;
 import com.hotrodoan.security.jwt.JwtProvider;
 import com.hotrodoan.security.jwt.JwtTokenFilter;
-import com.hotrodoan.service.BookingService;
-import com.hotrodoan.service.EmployeeService;
-import com.hotrodoan.service.MemberService;
-import com.hotrodoan.service.UserService;
+import com.hotrodoan.service.*;
 import com.hotrodoan.test.CurrentTime;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +48,9 @@ public class BookingController {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private WorkoutSessionService workoutSessionService;
+
     @GetMapping("/admin/all")
     public ResponseEntity<?> pageBooking(@PageableDefault(sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
         Page<Booking> bookings = bookingService.getAllBooking(pageable);
@@ -80,7 +81,11 @@ public class BookingController {
             User user = userService.findByUsername(username).orElseThrow();
             Member member = memberService.getMemberByUser(user);
             booking.setMember(member);
-            return new ResponseEntity<>(bookingService.addBooking(booking), HttpStatus.OK);
+            Booking newBooking = bookingService.addBooking(booking);
+            WorkoutSession workoutSession = new WorkoutSession();
+            workoutSession.setBooking(newBooking);
+
+            return new ResponseEntity<>(newBooking, HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
