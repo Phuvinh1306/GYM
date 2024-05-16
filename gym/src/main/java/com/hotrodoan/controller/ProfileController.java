@@ -1,5 +1,6 @@
 package com.hotrodoan.controller;
 
+import com.hotrodoan.dto.request.ChangePasswordForm;
 import com.hotrodoan.dto.response.ResponseMessage;
 import com.hotrodoan.model.Member;
 import com.hotrodoan.model.User;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -30,6 +32,9 @@ public class ProfileController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("")
 //    public ResponseEntity<?> getProfile(HttpServletRequest request) {
@@ -56,17 +61,20 @@ public class ProfileController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(HttpServletRequest request, @RequestBody User u) {
+    public ResponseEntity<?> changePassword(HttpServletRequest request, @RequestBody ChangePasswordForm changePasswordForm) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
-        User user1 = userService.findByUsername(username).orElseThrow();
-        u.setName(user1.getName());
-        u.setUsername(user1.getUsername());
-        u.setEmail(user1.getEmail());
-        u.setAvatar(user1.getAvatar());
-//        User user = new User();
-//        user.setPassword(password);
-        return new ResponseEntity<>(profileService.changePassword(u, user1.getId()), HttpStatus.OK);
+        User user = userService.findByUsername(username).orElseThrow();
+
+        if(passwordEncoder.matches(changePasswordForm.getOldPassword(), user.getPassword())){
+            if(!changePasswordForm.getNewPassword().equals(changePasswordForm.getConfirmPassword())){
+                return new ResponseEntity<>(new ResponseMessage("confirm_password_not_match"), HttpStatus.OK);
+            }
+            user.setPassword(passwordEncoder.encode(changePasswordForm.getNewPassword()));
+            userService.save(user);
+            return new ResponseEntity<>(new ResponseMessage("change_password_success"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ResponseMessage("change_password_fail"), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
