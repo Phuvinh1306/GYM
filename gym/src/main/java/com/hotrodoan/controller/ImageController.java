@@ -40,4 +40,12 @@ public class ImageController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
                 .body(new ByteArrayResource(image.getData()));
     }
+
+    @GetMapping("/view/{imageId}")
+    public ResponseEntity<Resource> viewImage(@PathVariable String imageId) throws Exception {
+        Image image = imageService.getImage(imageId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .body(new ByteArrayResource(image.getData()));
+    }
 }

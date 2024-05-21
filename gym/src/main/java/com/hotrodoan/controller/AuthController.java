@@ -1,7 +1,5 @@
 package com.hotrodoan.controller;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.hotrodoan.config.Utility;
 import com.hotrodoan.dto.request.LoginForm;
 import com.hotrodoan.dto.request.SignupForm;
@@ -94,6 +92,10 @@ public class AuthController {
                     case "employee":
                         Role pmRole = roleService.findByName(RoleName.EMPLOYEE).orElseThrow(() -> new RuntimeException("Role not found"));
                         roles.add(pmRole);
+                        break;
+                    case "manager":
+                        Role managerRole = roleService.findByName(RoleName.MANAGER).orElseThrow(() -> new RuntimeException("Role not found"));
+                        roles.add(managerRole);
                         break;
                     default:
                         Role userRole = roleService.findByName(RoleName.USER).orElseThrow(() -> new RuntimeException("Role not found"));
