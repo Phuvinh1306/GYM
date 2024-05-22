@@ -11,7 +11,7 @@ public interface GymBranchService {
     public GymBranch createGymBranch(GymBranch gymBranch);
     public GymBranch updateGymBranch(GymBranch gymBranch, Long id);
     public GymBranch getGymBranchById(Long id);
-    public Page<GymBranch> getAllGymBranches(String name, String address, Pageable pageable);
+    public Page<GymBranch> getAllGymBranches(String keyword, Pageable pageable);
     public void deleteGymBranchById(Long id);
     public List<GymBranch_Room> getGymBranchRoomById(Long id);
 }

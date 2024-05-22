@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,32 +30,95 @@ public class RoomController {
         return new ResponseEntity<>(roomService.getAllRoom(), HttpStatus.OK);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/admin/add")
     public ResponseEntity<Equipment_RoomDTO> addRoom(@RequestBody Equipment_RoomDTO equipmentRoomDTO) {
         Room room = new Room();
         room.setName(equipmentRoomDTO.getName());
         Room newRoom = roomService.addRoom(room);
         List<Equipment_Amount> equipmentAmounts = equipmentRoomDTO.getEquipmentAmounts();
         for (Equipment_Amount equipmentAmount : equipmentAmounts) {
-            Equipment equipment = new Equipment();
-            equipment.setName(equipmentAmount.getEquipment().getName());
-            equipment.setPrice(equipmentAmount.getEquipment().getPrice());
-            equipment.setMadein(equipmentAmount.getEquipment().getMadein());
-            equipment.setImage(equipmentAmount.getEquipment().getImage());
-            equipment.setEquipType(equipmentAmount.getEquipment().getEquipType());
+            Equipment equipment = equipmentAmount.getEquipment();
+
             Room_Equipment roomEquipment = new Room_Equipment();
             roomEquipment.setRoom(newRoom);
             roomEquipment.setEquipment(equipment);
+            roomEquipment.setQuantity(equipmentAmount.getAmount());
             room_equipmentService.createRoom_Equipment(roomEquipment);
         }
         return new ResponseEntity<>(equipmentRoomDTO, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<Equipment_RoomDTO> getRoomAdmin(@PathVariable("id") Long id) {
+        Equipment_RoomDTO equipmentRoomDTO = roomService.getByRoom(id);
+        return new ResponseEntity<>(equipmentRoomDTO, HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/update/{id}")
     public ResponseEntity<Equipment_RoomDTO> updateRoom(@RequestBody Equipment_RoomDTO equipmentRoomDTO, @PathVariable Long id) {
+        Equipment_RoomDTO oldEquipment_RoomDTO = roomService.getByRoom(id);
         Room room = roomService.getRoom(id);
         room.setName(equipmentRoomDTO.getName());
-        Room updateRoom = roomService.updateRoom(room, id);
+        Room updatedRoom = roomService.updateRoom(room, id);
+
+        List<Equipment_Amount> newEquipmentAmounts = equipmentRoomDTO.getEquipmentAmounts();
+        List<Equipment_Amount> oldEquipmentAmounts = oldEquipment_RoomDTO.getEquipmentAmounts();
+
+        if (newEquipmentAmounts.size() > oldEquipmentAmounts.size()) {
+            for (int i = 0; i < oldEquipmentAmounts.size(); i++) {
+                Equipment_Amount oldEquipmentAmount = oldEquipmentAmounts.get(i);
+                Equipment_Amount newEquipmentAmount = newEquipmentAmounts.get(i);
+
+                Room_Equipment roomEquipment = room_equipmentService.getRoom_EquipmentByRoomAndEquipment(updatedRoom, oldEquipmentAmount.getEquipment());
+
+                roomEquipment.setRoom(updatedRoom);
+                roomEquipment.setEquipment(newEquipmentAmount.getEquipment());
+                roomEquipment.setQuantity(newEquipmentAmount.getAmount());
+                room_equipmentService.updateRoom_Equipment(roomEquipment, roomEquipment.getId());
+            }
+
+            for (int i = oldEquipmentAmounts.size(); i < newEquipmentAmounts.size(); i++) {
+                Room newRoom = roomService.getRoom(id);
+                Equipment newEquipment = newEquipmentAmounts.get(i).getEquipment();
+                int quantity = newEquipmentAmounts.get(i).getAmount();
+                Room_Equipment roomEquipment = new Room_Equipment();
+                roomEquipment.setRoom(newRoom);
+                roomEquipment.setEquipment(newEquipment);
+                roomEquipment.setQuantity(quantity);
+                room_equipmentService.createRoom_Equipment(roomEquipment);
+            }
+        } else if (newEquipmentAmounts.size() == oldEquipmentAmounts.size()) {
+            for (int i = 0; i < oldEquipmentAmounts.size(); i++) {
+                Equipment_Amount oldEquipmentAmount = oldEquipmentAmounts.get(i);
+                Equipment_Amount newEquipmentAmount = newEquipmentAmounts.get(i);
+
+                Room_Equipment roomEquipment = room_equipmentService.getRoom_EquipmentByRoomAndEquipment(updatedRoom, oldEquipmentAmount.getEquipment());
+
+                roomEquipment.setRoom(updatedRoom);
+                roomEquipment.setEquipment(newEquipmentAmount.getEquipment());
+                roomEquipment.setQuantity(newEquipmentAmount.getAmount());
+                room_equipmentService.updateRoom_Equipment(roomEquipment, roomEquipment.getId());
+            }
+        } else {
+            for (int i = 0; i < newEquipmentAmounts.size(); i++) {
+                Equipment_Amount oldEquipmentAmount = oldEquipmentAmounts.get(i);
+                Equipment_Amount newEquipmentAmount = newEquipmentAmounts.get(i);
+
+                Room_Equipment roomEquipment = room_equipmentService.getRoom_EquipmentByRoomAndEquipment(updatedRoom, oldEquipmentAmount.getEquipment());
+
+                roomEquipment.setRoom(updatedRoom);
+                roomEquipment.setEquipment(newEquipmentAmount.getEquipment());
+                roomEquipment.setQuantity(newEquipmentAmount.getAmount());
+                room_equipmentService.updateRoom_Equipment(roomEquipment, roomEquipment.getId());
+            }
+
+            for (int i = newEquipmentAmounts.size(); i < oldEquipmentAmounts.size(); i++) {
+                Equipment_Amount oldEquipmentAmount = oldEquipmentAmounts.get(i);
+                Room_Equipment roomEquipment = room_equipmentService.getRoom_EquipmentByRoomAndEquipment(updatedRoom, oldEquipmentAmount.getEquipment());
+                room_equipmentService.deleteRoom_Equipment(roomEquipment.getId());
+            }
+        }
+
         return new ResponseEntity<>(equipmentRoomDTO, HttpStatus.OK);
     }
 

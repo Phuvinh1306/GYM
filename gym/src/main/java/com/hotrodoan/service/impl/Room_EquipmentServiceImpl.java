@@ -8,6 +8,8 @@ import com.hotrodoan.service.Room_EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class Room_EquipmentServiceImpl implements Room_EquipmentService {
     @Autowired
@@ -41,5 +43,10 @@ public class Room_EquipmentServiceImpl implements Room_EquipmentService {
     @Override
     public Room_Equipment getRoom_EquipmentByRoomAndEquipment(Room room, Equipment equipment) {
         return room_EquipmentRepository.findByRoomAndEquipment(room, equipment);
+    }
+
+    @Override
+    public List<Room_Equipment> getRoom_EquipmentByRoom(Room room) {
+        return room_EquipmentRepository.findByRoom(room);
     }
 }

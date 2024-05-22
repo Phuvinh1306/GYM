@@ -1,13 +1,18 @@
 package com.hotrodoan.service.impl;
 
+import com.hotrodoan.dto.request.Equipment_Amount;
+import com.hotrodoan.dto.request.Equipment_RoomDTO;
 import com.hotrodoan.exception.RoomNotFoundException;
 import com.hotrodoan.model.Equipment;
 import com.hotrodoan.model.Room;
+import com.hotrodoan.model.Room_Equipment;
 import com.hotrodoan.repository.RoomRepository;
 import com.hotrodoan.service.RoomService;
+import com.hotrodoan.service.Room_EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +21,8 @@ import java.util.Set;
 public class RoomServiceImpl implements RoomService {
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
+    private Room_EquipmentService room_equipmentService;
 
     @Override
     public List<Room> getAllRoom() {
@@ -49,5 +56,22 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room getRoom(Long id) {
         return roomRepository.findById(id).orElseThrow(() -> new RoomNotFoundException("Không tìm thấy phòng tập"));
+    }
+
+    @Override
+    public Equipment_RoomDTO getByRoom(Long roomId) {
+        Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotFoundException("Không tìm thấy phòng tập"));
+        List<Room_Equipment> roomEquipments = room_equipmentService.getRoom_EquipmentByRoom(room);
+        Equipment_RoomDTO equipmentRoomDTO = new Equipment_RoomDTO();
+        equipmentRoomDTO.setName(room.getName());
+        List<Equipment_Amount> equipmentAmounts = new ArrayList<>();
+        for (Room_Equipment roomEquipment : roomEquipments) {
+            Equipment_Amount equipmentAmount = new Equipment_Amount();
+            equipmentAmount.setEquipment(roomEquipment.getEquipment());
+            equipmentAmount.setAmount(roomEquipment.getQuantity());
+            equipmentAmounts.add(equipmentAmount);
+        }
+        equipmentRoomDTO.setEquipmentAmounts(equipmentAmounts);
+        return equipmentRoomDTO;
     }
 }

@@ -14,7 +14,7 @@ public class Room_Equipment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Room room;
     @ManyToOne
     private Equipment equipment;

@@ -34,14 +34,13 @@ public class GymBranchController {
     private GymBranch_RoomService gymBranchRoomService;
 
     @GetMapping("")
-    public ResponseEntity<Page<GymBranch>> getAllGymBranches(@RequestParam(defaultValue = "") String name,
-                                                            @RequestParam(defaultValue = "") String address,
+    public ResponseEntity<Page<GymBranch>> getAllGymBranches(@RequestParam(defaultValue = "") String keyword,
                                                             @RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size,
                                                             @RequestParam(defaultValue = "id") String sortBy,
                                                             @RequestParam(defaultValue = "desc") String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new ResponseEntity(gymBranchService.getAllGymBranches(name, address, pageable), HttpStatus.OK);
+        return new ResponseEntity(gymBranchService.getAllGymBranches(keyword, pageable), HttpStatus.OK);
     }
 
     @PostMapping("/add")
@@ -55,9 +54,12 @@ public class GymBranchController {
 
         List<Room_Amount> theSameRoomOnRoomAmounts = new ArrayList<>();
 
-//        for () {
-//            if (roomAmount.getRoom())
-//        }
+        for (int i=0; i<gymBranchRoomDTO.getRoomAndAmounts().size(); i++) {
+            if (gymBranchRoomDTO.getRoomAndAmounts().get(i).getRoom().getId() == gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getRoom().getId()) {
+                gymBranchRoomDTO.getRoomAndAmounts().get(i).setAmount(gymBranchRoomDTO.getRoomAndAmounts().get(i).getAmount() + gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getAmount());
+                theSameRoomOnRoomAmounts.add(gymBranchRoomDTO.getRoomAndAmounts().get(i));
+            }
+        }
 
         for (Room_Amount roomAmount : gymBranchRoomDTO.getRoomAndAmounts()) {
             GymBranch_Room gymBranchRoom = new GymBranch_Room();

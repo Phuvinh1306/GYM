@@ -40,9 +40,8 @@ public class GymBranchServiceImpl implements GymBranchService {
     }
 
     @Override
-    public Page<GymBranch> getAllGymBranches(String name, String address, Pageable pageable) {
-
-        return gymBranchRepository.findByNameOrAddressContaining(name, address, pageable);
+    public Page<GymBranch> getAllGymBranches(String keyword, Pageable pageable) {
+        return gymBranchRepository.searchByKeyword(keyword, pageable);
     }
 
     @Override
