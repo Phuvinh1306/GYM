@@ -53,6 +53,12 @@ public class GymBranchController {
 
         GymBranch newGymBranch = gymBranchService.createGymBranch(gymBranch);
 
+        List<Room_Amount> theSameRoomOnRoomAmounts = new ArrayList<>();
+
+//        for () {
+//            if (roomAmount.getRoom())
+//        }
+
         for (Room_Amount roomAmount : gymBranchRoomDTO.getRoomAndAmounts()) {
             GymBranch_Room gymBranchRoom = new GymBranch_Room();
             gymBranchRoom.setGymBranch(newGymBranch);
@@ -148,7 +154,24 @@ public class GymBranchController {
     }
 
     @GetMapping("admin/{id}")
-    public ResponseEntity<List<GymBranch_Room>> getGymBranchRoom(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(gymBranchService.getGymBranchRoomById(id), HttpStatus.OK);
+    public ResponseEntity<GymBranch_RoomDTO> getGymBranchRoom(@PathVariable("id") Long id) {
+        GymBranch gymBranch = gymBranchService.getGymBranchById(id);
+        GymBranch_RoomDTO gymBranch_RoomDTO = new GymBranch_RoomDTO();
+        gymBranch_RoomDTO.setBranchGymName(gymBranch.getName());
+        gymBranch_RoomDTO.setAddress(gymBranch.getAddress());
+        gymBranch_RoomDTO.setManager(gymBranch.getManager());
+
+        List<GymBranch_Room> gymBranchRooms = gymBranchRoomService.getGymBranchesByGymBranch(gymBranch);
+        List<Room_Amount> roomAmounts = new ArrayList<>();
+        for (GymBranch_Room gymBranchRoom : gymBranchRooms) {
+            Room_Amount room_amount = new Room_Amount();
+            room_amount.setRoom(gymBranchRoom.getRoom());
+            room_amount.setAmount(gymBranchRoom.getAmount());
+            roomAmounts.add(room_amount);
+        }
+
+        gymBranch_RoomDTO.setRoomAndAmounts(roomAmounts);
+
+        return new ResponseEntity<>(gymBranch_RoomDTO, HttpStatus.OK);
     }
 }
