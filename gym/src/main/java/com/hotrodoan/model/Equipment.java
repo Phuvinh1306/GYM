@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,4 +34,8 @@ public class Equipment {
 
     @ManyToOne
     private EquipType equipType;
+
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "equipment")
+    @JsonIgnore
+    private List<Room_Equipment> roomEquipments;
 }
