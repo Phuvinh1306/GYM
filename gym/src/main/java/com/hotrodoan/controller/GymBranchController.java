@@ -3,6 +3,7 @@ package com.hotrodoan.controller;
 import com.hotrodoan.dto.request.GymBranch_RoomDTO;
 import com.hotrodoan.dto.request.Room_Amount;
 import com.hotrodoan.dto.response.ResponseMessage;
+import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.GymBranch;
 import com.hotrodoan.model.GymBranch_Room;
 import com.hotrodoan.model.Room;
@@ -48,30 +49,44 @@ public class GymBranchController {
 
     @PostMapping("/add")
     public ResponseEntity<GymBranch_RoomDTO> addGymBranch(@RequestBody GymBranch_RoomDTO gymBranchRoomDTO) {
-        GymBranch gymBranch = new GymBranch();
-        gymBranch.setName(gymBranchRoomDTO.getBranchGymName());
-        gymBranch.setAddress(gymBranchRoomDTO.getAddress());
-        gymBranch.setManager(gymBranchRoomDTO.getManager());
-
-        GymBranch newGymBranch = gymBranchService.createGymBranch(gymBranch);
-
         List<Room_Amount> theSameRoomOnRoomAmounts = new ArrayList<>();
-
-        for (int i=0; i<gymBranchRoomDTO.getRoomAndAmounts().size(); i++) {
+        Employee manager = gymBranchRoomDTO.getManager();
+        if (gymBranchService.existsByManager(manager)) {
+            throw new RuntimeException("Manager is duplicated!");
+        }
+        for (int i = 0; i < gymBranchRoomDTO.getRoomAndAmounts().size()-1; i++) {
             if (gymBranchRoomDTO.getRoomAndAmounts().get(i).getRoom().getId() == gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getRoom().getId()) {
                 gymBranchRoomDTO.getRoomAndAmounts().get(i).setAmount(gymBranchRoomDTO.getRoomAndAmounts().get(i).getAmount() + gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getAmount());
                 theSameRoomOnRoomAmounts.add(gymBranchRoomDTO.getRoomAndAmounts().get(i));
             }
         }
 
-        for (Room_Amount roomAmount : gymBranchRoomDTO.getRoomAndAmounts()) {
-            GymBranch_Room gymBranchRoom = new GymBranch_Room();
-            gymBranchRoom.setGymBranch(newGymBranch);
-            gymBranchRoom.setRoom(roomAmount.getRoom());
-            gymBranchRoom.setAmount(roomAmount.getAmount());
-            gymBranchRoomService.createGymBranch_Room(gymBranchRoom);
+        if (theSameRoomOnRoomAmounts.size() > 0) {
+            throw new RuntimeException("Room is duplicated!");
+        }else {
+            GymBranch gymBranch = new GymBranch();
+            gymBranch.setName(gymBranchRoomDTO.getBranchGymName());
+            gymBranch.setAddress(gymBranchRoomDTO.getAddress());
+            gymBranch.setManager(gymBranchRoomDTO.getManager());
+
+            GymBranch newGymBranch = gymBranchService.createGymBranch(gymBranch);
+
+            for (int i=0; i<gymBranchRoomDTO.getRoomAndAmounts().size(); i++) {
+                if (gymBranchRoomDTO.getRoomAndAmounts().get(i).getRoom().getId() == gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getRoom().getId()) {
+                    gymBranchRoomDTO.getRoomAndAmounts().get(i).setAmount(gymBranchRoomDTO.getRoomAndAmounts().get(i).getAmount() + gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getAmount());
+                    theSameRoomOnRoomAmounts.add(gymBranchRoomDTO.getRoomAndAmounts().get(i));
+                }
+            }
+
+            for (Room_Amount roomAmount : gymBranchRoomDTO.getRoomAndAmounts()) {
+                GymBranch_Room gymBranchRoom = new GymBranch_Room();
+                gymBranchRoom.setGymBranch(newGymBranch);
+                gymBranchRoom.setRoom(roomAmount.getRoom());
+                gymBranchRoom.setAmount(roomAmount.getAmount());
+                gymBranchRoomService.createGymBranch_Room(gymBranchRoom);
+            }
+            return new ResponseEntity<>(gymBranchRoomDTO, HttpStatus.OK);
         }
-        return new ResponseEntity<>(gymBranchRoomDTO, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
@@ -85,10 +100,6 @@ public class GymBranchController {
 
         List<GymBranch_Room> gymBranchRooms = gymBranchRoomService.getGymBranchesByGymBranch(gymBranch);
         List<Room_Amount> oldRoomAmounts = new ArrayList<>();
-
-//        for (GymBranch_Room gymBranchRoom : gymBranchRooms) {
-//            if ()
-//        }
 
         for (GymBranch_Room gymBranchRoom : gymBranchRooms) {
             Room_Amount room_amount = new Room_Amount();

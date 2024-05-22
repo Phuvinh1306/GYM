@@ -1,5 +1,6 @@
 package com.hotrodoan.repository;
 
+import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.GymBranch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,4 +13,5 @@ import org.springframework.stereotype.Repository;
 public interface GymBranchRepository extends JpaRepository<GymBranch, Long> {
     @Query("SELECT gb FROM GymBranch gb WHERE CONCAT(gb.name, ' ', gb.address) LIKE %:keyword%")
     Page<GymBranch> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    boolean existsByManager(Employee manager);
 }

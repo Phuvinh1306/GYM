@@ -1,5 +1,6 @@
 package com.hotrodoan.service.impl;
 
+import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.GymBranch;
 import com.hotrodoan.model.GymBranch_Room;
 import com.hotrodoan.repository.GymBranchRepository;
@@ -54,5 +55,10 @@ public class GymBranchServiceImpl implements GymBranchService {
         GymBranch gymBranch = gymBranchRepository.findById(id).orElse(null);
         List<GymBranch_Room> gymBranch_rooms = gymBranch_roomRepository.findByGymBranch(gymBranch);
         return gymBranch_rooms;
+    }
+
+    @Override
+    public boolean existsByManager(Employee manager) {
+        return gymBranchRepository.existsByManager(manager);
     }
 }

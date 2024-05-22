@@ -1,5 +1,6 @@
 package com.hotrodoan.service;
 
+import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.GymBranch;
 import com.hotrodoan.model.GymBranch_Room;
 import org.springframework.data.domain.Page;
@@ -14,4 +15,5 @@ public interface GymBranchService {
     public Page<GymBranch> getAllGymBranches(String keyword, Pageable pageable);
     public void deleteGymBranchById(Long id);
     public List<GymBranch_Room> getGymBranchRoomById(Long id);
+    boolean existsByManager(Employee manager);
 }
