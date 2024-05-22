@@ -24,6 +24,7 @@ public class GymBranch_RoomServiceImpl implements GymBranch_RoomService {
         return gymBranchRoomRepository.findById(id).map(gb->{
             gb.setGymBranch(gymBranchRoom.getGymBranch());
             gb.setRoom(gymBranchRoom.getRoom());
+            gb.setAmount(gymBranchRoom.getAmount());
             return gymBranchRoomRepository.save(gb);
         }).orElseThrow(()->new RuntimeException("Gym branch room not found"));
     }

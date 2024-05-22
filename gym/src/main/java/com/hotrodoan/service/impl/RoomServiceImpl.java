@@ -32,8 +32,8 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findById(id).map(po -> {
             po.setName(room.getName());
 
-            Set<Equipment> equipments = new HashSet<>(room.getEquipment());
-            po.setEquipment(equipments);
+//            Set<Equipment> equipments = new HashSet<>(room.getEquipment());
+//            po.setEquipment(equipments);
             return roomRepository.save(po);
         }).orElseThrow(() -> new RoomNotFoundException("Không tìm thấy phòng tập"));
     }

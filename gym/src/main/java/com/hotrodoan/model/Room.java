@@ -19,12 +19,4 @@ public class Room {
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "equipment_room",
-            joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "equipment_id")
-    )
-    private Set<Equipment> equipment = new HashSet<>();
 }

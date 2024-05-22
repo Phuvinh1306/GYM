@@ -2,6 +2,7 @@ package com.hotrodoan.service.impl;
 
 import com.hotrodoan.model.Member;
 import com.hotrodoan.model.Member_Package;
+import com.hotrodoan.model.Member_PackageSub;
 import com.hotrodoan.model.Package;
 import com.hotrodoan.repository.Member_PackageRepository;
 import com.hotrodoan.service.Member_PackageService;
@@ -98,5 +99,17 @@ public class Member_PackageServiceImpl implements Member_PackageService {
     @Override
     public Member_Package getMember_Package(Long id) {
         return member_packageRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy gói dịch vụ"));
+    }
+
+    @Override
+    public Member_Package createMember_PackageBySub(Member_PackageSub memberPackageSub) {
+        Member_Package member_package = new Member_Package();
+        member_package.setMember(memberPackageSub.getMember());
+        member_package.setPack(memberPackageSub.getPack());
+        member_package.setStartDate(memberPackageSub.getStartDate());
+        member_package.setQuantity(memberPackageSub.getQuantity());
+        member_package.setAmount(memberPackageSub.getAmount());
+        member_package.setEndDate(memberPackageSub.getEndDate());
+        return member_packageRepository.save(member_package);
     }
 }

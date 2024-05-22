@@ -64,7 +64,7 @@ public class GymBranchController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<GymBranch> updateGymBranch(@RequestBody GymBranch_RoomDTO gymBranchRoomDTO, @PathVariable Long id){
+    public ResponseEntity<GymBranch_RoomDTO> updateGymBranch(@RequestBody GymBranch_RoomDTO gymBranchRoomDTO, @PathVariable Long id){
         GymBranch gymBranch = gymBranchService.getGymBranchById(id);
 
         gymBranch.setName(gymBranchRoomDTO.getBranchGymName());
@@ -90,10 +90,45 @@ public class GymBranchController {
                 oldRoomAmount.setAmount(newRoomAmount.getAmount());
 
                 gymBranchRooms.get(i).setRoom(newRoomAmount.getRoom());
+                gymBranchRooms.get(i).setAmount(newRoomAmount.getAmount());
+                gymBranchRoomService.updateGymBranch_Room(gymBranchRooms.get(i), gymBranchRooms.get(i).getId());
+            }
+        } else if (oldRoomAmounts.size() < newRoomAmounts.size()) {
+            for (int i = 0; i < oldRoomAmounts.size(); i++) {
+                Room_Amount oldRoomAmount = oldRoomAmounts.get(i);
+                Room_Amount newRoomAmount = newRoomAmounts.get(i);
+                oldRoomAmount.setRoom(newRoomAmount.getRoom());
+                oldRoomAmount.setAmount(newRoomAmount.getAmount());
+
+                gymBranchRooms.get(i).setRoom(newRoomAmount.getRoom());
+                gymBranchRooms.get(i).setAmount(newRoomAmount.getAmount());
+                gymBranchRoomService.updateGymBranch_Room(gymBranchRooms.get(i), gymBranchRooms.get(i).getId());
+            }
+            for (int i = oldRoomAmounts.size(); i < newRoomAmounts.size(); i++) {
+                Room_Amount newRoomAmount = newRoomAmounts.get(i);
+                GymBranch_Room gymBranchRoom = new GymBranch_Room();
+                gymBranchRoom.setGymBranch(gymBranch);
+                gymBranchRoom.setRoom(newRoomAmount.getRoom());
+                gymBranchRoom.setAmount(newRoomAmount.getAmount());
+                gymBranchRoomService.createGymBranch_Room(gymBranchRoom);
             }
         }
+        else {
+            for (int i = 0; i < newRoomAmounts.size(); i++) {
+                Room_Amount oldRoomAmount = oldRoomAmounts.get(i);
+                Room_Amount newRoomAmount = newRoomAmounts.get(i);
+                oldRoomAmount.setRoom(newRoomAmount.getRoom());
+                oldRoomAmount.setAmount(newRoomAmount.getAmount());
 
-        return new ResponseEntity<>(gymBranchService.updateGymBranch(gymBranch, id), HttpStatus.OK);
+                gymBranchRooms.get(i).setRoom(newRoomAmount.getRoom());
+                gymBranchRooms.get(i).setAmount(newRoomAmount.getAmount());
+                gymBranchRoomService.updateGymBranch_Room(gymBranchRooms.get(i), gymBranchRooms.get(i).getId());
+            }
+            for (int i = newRoomAmounts.size(); i < oldRoomAmounts.size(); i++) {
+                gymBranchRoomService.deleteGymBranch_Room(gymBranchRooms.get(i).getId());
+            }
+        }
+        return new ResponseEntity<>(gymBranchRoomDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

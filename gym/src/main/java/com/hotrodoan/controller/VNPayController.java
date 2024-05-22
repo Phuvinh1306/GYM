@@ -1,8 +1,10 @@
 package com.hotrodoan.controller;
 
 import com.hotrodoan.model.Member_Package;
+import com.hotrodoan.model.Member_PackageSub;
 import com.hotrodoan.model.VnPayPayment;
 import com.hotrodoan.service.Member_PackageService;
+import com.hotrodoan.service.Member_PackageSubService;
 import com.hotrodoan.service.VNPayService;
 import com.hotrodoan.service.VnPayPaymentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,13 +15,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @CrossOrigin(origins = "*")
 //@org.springframework.stereotype.Controller
-public class Controller {
+public class VNPayController {
     @Autowired
     private VNPayService vnPayService;
 
@@ -28,6 +31,9 @@ public class Controller {
 
     @Autowired
     private Member_PackageService member_packageService;
+
+    @Autowired
+    private Member_PackageSubService member_packageSubService;
 
 
     @GetMapping("/pay")
@@ -45,7 +51,7 @@ public class Controller {
     }
 
     @GetMapping("/vnpay-payment")
-    public String GetMapping(HttpServletRequest request, Model model){
+    public String vnPayPayment(HttpServletRequest request, Model model){
         int paymentStatus =vnPayService.orderReturn(request);
 
 //        Object obj = request.getSession().getAttribute("m_p");
@@ -57,6 +63,10 @@ public class Controller {
         String paymentTime = request.getParameter("vnp_PayDate");
         String transactionId = request.getParameter("vnp_TransactionNo");
         String totalPrice = request.getParameter("vnp_Amount");
+
+        int totalPriceInt = Integer.parseInt(totalPrice);
+        totalPriceInt = totalPriceInt / 100;
+        totalPrice = String.valueOf(totalPriceInt);
 
         model.addAttribute("orderId", orderInfo);
         model.addAttribute("totalPrice", totalPrice);
@@ -78,7 +88,13 @@ public class Controller {
         }
 
         if (paymentStatus == 1){
-//            member_packageService.addMember_Package(m_p);
+            if (orderInfo.contains("pack")){
+                String idString = orderInfo.replace("pack", "");
+                Long id = Long.parseLong(idString);
+                Member_PackageSub memberPackageSub = member_packageSubService.getMember_PackageSub(id);
+                member_packageService.createMember_PackageBySub(memberPackageSub);
+                member_packageSubService.deleteMember_PackageSub(id);
+            }
             return "ordersuccess";
         }else
             return "orderfail";

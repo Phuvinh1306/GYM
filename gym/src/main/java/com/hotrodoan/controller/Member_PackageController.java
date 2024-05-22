@@ -1,9 +1,8 @@
 package com.hotrodoan.controller;
 
-import com.hotrodoan.model.Member;
-import com.hotrodoan.model.Member_Package;
+import com.hotrodoan.dto.response.VNPayResponse;
+import com.hotrodoan.model.*;
 import com.hotrodoan.model.Package;
-import com.hotrodoan.model.User;
 import com.hotrodoan.security.jwt.JwtProvider;
 import com.hotrodoan.security.jwt.JwtTokenFilter;
 import com.hotrodoan.service.*;
@@ -45,6 +44,8 @@ public class Member_PackageController {
 
     @Autowired
     private VNPayService vnPayService;
+    @Autowired
+    private Member_PackageSubService member_packageSubService;
 
     @GetMapping("/admin/all")
     public ResponseEntity<Page<Member_Package>> getAllMember_Package(@RequestParam(defaultValue = "0") int page,
@@ -74,31 +75,24 @@ public class Member_PackageController {
     }
 
     @PostMapping("/add")
-    public String addMember_Package(HttpServletRequest request, @RequestBody Member_Package member_package, HttpSession session) {
+    public ResponseEntity<VNPayResponse> addMember_Package(HttpServletRequest request, @RequestBody Member_PackageSub memberPackageSub) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
         Member member = memberService.getMemberByUser(user);
-        member_package.setMember(member);
-        Package pack = member_package.getPack();
-        Long packId = pack.getId();
-        Package pack1 = packageService.getPackage(packId);
-        int totalPrice = pack1.getPrice() * member_package.getQuantity();
-//        long millis = System.currentTimeMillis();
 
-        Member_Package m_p = new Member_Package();
-//        m_p.setId(millis);
-        m_p.setMember(member);
-        m_p.setPack(pack);
-        m_p.setQuantity(member_package.getQuantity());
-        m_p.setStartDate(member_package.getStartDate());
-        session.setAttribute("m_p", m_p);
-        String packName = pack1.getName();
+        memberPackageSub.setMember(member);
+//        Long packId = pack.getId();
+//        Package pack1 = packageService.getPackage(packId);
+//        int totalPrice = pack1.getPrice() * memberPackageSub.getQuantity();
+//        memberPackageSub.setAmount(totalPrice);
+        Member_PackageSub newMemberPackageSub = member_packageSubService.createMember_PackageSub(memberPackageSub);
+
 //        return new ResponseEntity<>(member_packageService.addMember_Package(member_package), HttpStatus.OK);
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String vnpayUrl = vnPayService.createOrder(totalPrice, "Pay for "+packName, baseUrl);
+        String vnpayUrl = vnPayService.createOrder(newMemberPackageSub.getAmount(), "pack"+newMemberPackageSub.getId(), baseUrl);
 //        return new RedirectView(vnpayUrl);
-        return vnpayUrl;
+        return new ResponseEntity<>(new VNPayResponse("pay for "+newMemberPackageSub.getPack().getName(), vnpayUrl), HttpStatus.OK);
     }
 
     @PutMapping("admin/update/{id}")
