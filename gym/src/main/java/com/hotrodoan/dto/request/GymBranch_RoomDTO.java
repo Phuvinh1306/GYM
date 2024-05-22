@@ -20,4 +20,5 @@ public class GymBranch_RoomDTO {
     private String address;
     private Employee manager;
     private List<Room_Amount> roomAndAmounts;
+    private int totalMember=0;
 }

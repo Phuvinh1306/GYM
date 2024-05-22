@@ -1,6 +1,7 @@
 package com.hotrodoan.service.impl;
 
 import com.hotrodoan.exception.NotFoundMemberException;
+import com.hotrodoan.model.GymBranch;
 import com.hotrodoan.model.Member;
 import com.hotrodoan.model.Package;
 import com.hotrodoan.model.User;
@@ -72,5 +73,10 @@ public class MemberServiceImpl implements MemberService {
     public Page<Member> findMembersByNameContaining(String name, Pageable pageable) {
         return memberRepository.findByNameContaining(name, pageable);
     }
+
+//    @Override
+//    public int countByGymBranch(GymBranch gymBranch) {
+//        return memberRepository.countByGymBranch(gymBranch);
+//    }
 
 }

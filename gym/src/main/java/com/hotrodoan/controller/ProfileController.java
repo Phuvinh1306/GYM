@@ -57,6 +57,7 @@ public class ProfileController {
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
         Member member1 = profileService.getProfileMember(user);
+        member.setUser(user);
         return new ResponseEntity<>(profileService.updateProfile(member, member1.getId()), HttpStatus.OK);
     }
 

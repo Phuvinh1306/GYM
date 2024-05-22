@@ -74,4 +74,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> findEmployeesByPositionId(Long positionId) {
         return employeeRepository.findByPositionId(positionId);
     }
+
+    @Override
+    public Page<Employee> getByEmployeesByPositionNameContaining(String positionName, Pageable pageable) {
+        return employeeRepository.findByPosition_NameContaining(positionName, pageable);
+    }
 }

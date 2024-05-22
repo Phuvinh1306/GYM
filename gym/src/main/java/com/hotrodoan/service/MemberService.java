@@ -1,5 +1,6 @@
 package com.hotrodoan.service;
 
+import com.hotrodoan.model.GymBranch;
 import com.hotrodoan.model.Member;
 import com.hotrodoan.model.User;
 import org.springframework.data.domain.Page;
@@ -19,4 +20,6 @@ public interface MemberService {
     Page<Member> getAllMember(Pageable pageable);
 
     Page<Member> findMembersByNameContaining(String name, Pageable pageable);
+
+//    int countByGymBranch(GymBranch gymBranch);
 }

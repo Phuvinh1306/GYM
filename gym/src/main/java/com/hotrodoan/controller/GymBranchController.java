@@ -8,6 +8,7 @@ import com.hotrodoan.model.GymBranch_Room;
 import com.hotrodoan.model.Room;
 import com.hotrodoan.service.GymBranchService;
 import com.hotrodoan.service.GymBranch_RoomService;
+import com.hotrodoan.service.MemberService;
 import com.hotrodoan.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,8 @@ public class GymBranchController {
     private RoomService roomService;
     @Autowired
     private GymBranch_RoomService gymBranchRoomService;
+    @Autowired
+    private MemberService memberService;
 
     @GetMapping("")
     public ResponseEntity<Page<GymBranch>> getAllGymBranches(@RequestParam(defaultValue = "") String keyword,
@@ -171,6 +174,8 @@ public class GymBranchController {
             room_amount.setAmount(gymBranchRoom.getAmount());
             roomAmounts.add(room_amount);
         }
+
+//        int totalMember = memberService.countByGymBranch(gymBranch);
 
         gymBranch_RoomDTO.setRoomAndAmounts(roomAmounts);
 

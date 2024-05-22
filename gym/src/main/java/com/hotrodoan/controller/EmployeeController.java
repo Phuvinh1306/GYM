@@ -52,13 +52,13 @@ public class EmployeeController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<Employee>> findEmployeesByNameContaining(@RequestParam(defaultValue = "") String name,
+    public ResponseEntity<Page<Employee>> findEmployeesByNameContaining(@RequestParam(defaultValue = "") String positionName,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size,
                                                                        @RequestParam(defaultValue = "id") String sortBy,
                                                                        @RequestParam(defaultValue = "desc") String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        Page<Employee> employees = employeeService.findEmployeesByNameContaining(name, pageable);
+        Page<Employee> employees = employeeService.getByEmployeesByPositionNameContaining(positionName, pageable);
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 }

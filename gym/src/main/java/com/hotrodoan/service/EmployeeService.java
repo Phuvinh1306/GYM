@@ -18,4 +18,5 @@ public interface EmployeeService {
     Page<Employee> getAllEmployee(Pageable pageable);
     Page<Employee> findEmployeesByNameContaining(String name, Pageable pageable);
     List<Employee> findEmployeesByPositionId(Long positionId);
+    Page<Employee> getByEmployeesByPositionNameContaining(String positionName, Pageable pageable);
 }
