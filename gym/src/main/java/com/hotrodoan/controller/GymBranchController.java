@@ -74,6 +74,11 @@ public class GymBranchController {
 
         List<GymBranch_Room> gymBranchRooms = gymBranchRoomService.getGymBranchesByGymBranch(gymBranch);
         List<Room_Amount> oldRoomAmounts = new ArrayList<>();
+
+//        for (GymBranch_Room gymBranchRoom : gymBranchRooms) {
+//            if ()
+//        }
+
         for (GymBranch_Room gymBranchRoom : gymBranchRooms) {
             Room_Amount room_amount = new Room_Amount();
             room_amount.setRoom(gymBranchRoom.getRoom());
@@ -140,5 +145,10 @@ public class GymBranchController {
     @GetMapping("/{id}")
     public ResponseEntity<GymBranch> getGymBranch(@PathVariable("id") Long id) {
         return new ResponseEntity<>(gymBranchService.getGymBranchById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("admin/{id}")
+    public ResponseEntity<List<GymBranch_Room>> getGymBranchRoom(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(gymBranchService.getGymBranchRoomById(id), HttpStatus.OK);
     }
 }

@@ -1,6 +1,7 @@
 package com.hotrodoan.service;
 
 import com.hotrodoan.model.GymBranch;
+import com.hotrodoan.model.GymBranch_Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,4 +13,5 @@ public interface GymBranchService {
     public GymBranch getGymBranchById(Long id);
     public Page<GymBranch> getAllGymBranches(String name, String address, Pageable pageable);
     public void deleteGymBranchById(Long id);
+    public List<GymBranch_Room> getGymBranchRoomById(Long id);
 }

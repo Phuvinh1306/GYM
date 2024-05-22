@@ -54,6 +54,7 @@ public class RoomController {
     public ResponseEntity<Equipment_RoomDTO> updateRoom(@RequestBody Equipment_RoomDTO equipmentRoomDTO, @PathVariable Long id) {
         Room room = roomService.getRoom(id);
         room.setName(equipmentRoomDTO.getName());
+        Room updateRoom = roomService.updateRoom(room, id);
         return new ResponseEntity<>(equipmentRoomDTO, HttpStatus.OK);
     }
 
