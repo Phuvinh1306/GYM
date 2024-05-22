@@ -9,6 +9,10 @@ import com.hotrodoan.model.Room_Equipment;
 import com.hotrodoan.service.RoomService;
 import com.hotrodoan.service.Room_EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +30,13 @@ public class RoomController {
     private Room_EquipmentService room_equipmentService;
 
     @GetMapping("")
-    public ResponseEntity<List<Room>> getAllRoom() {
-        return new ResponseEntity<>(roomService.getAllRoom(), HttpStatus.OK);
+    public ResponseEntity<Page<Room>> getAllRoom(@RequestParam(defaultValue = "") String name,
+                                                 @RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size,
+                                                 @RequestParam(defaultValue = "id") String sortBy,
+                                                 @RequestParam(defaultValue = "desc") String order){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
+        return new ResponseEntity<>(roomService.getAllByKeyword(name, pageable), HttpStatus.OK);
     }
 
     @PostMapping("/admin/add")

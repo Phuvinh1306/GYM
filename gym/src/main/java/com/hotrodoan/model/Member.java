@@ -50,6 +50,9 @@ public class Member{
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
 
+    @ManyToOne
+    private GymBranch gymBranch;
+
     @PrePersist
     public void onCreate() {
         createdAt = new Date();

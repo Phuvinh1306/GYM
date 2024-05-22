@@ -10,6 +10,8 @@ import com.hotrodoan.repository.RoomRepository;
 import com.hotrodoan.service.RoomService;
 import com.hotrodoan.service.Room_EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -73,5 +75,10 @@ public class RoomServiceImpl implements RoomService {
         }
         equipmentRoomDTO.setEquipmentAmounts(equipmentAmounts);
         return equipmentRoomDTO;
+    }
+
+    @Override
+    public Page<Room> getAllByKeyword(String name, Pageable pageable) {
+        return roomRepository.findAllByKeyword(name, pageable);
     }
 }
