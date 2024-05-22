@@ -38,44 +38,54 @@ public class EquipmentController {
 //        return new ResponseEntity<>(equipmentService.getAllEquipment(pageable), HttpStatus.OK);
 //    }
 
-    @PostMapping("/add")
-    public ResponseEntity<Room_EquipmentDTO> addEquipment(@RequestBody Room_EquipmentDTO roomEquipmentDTO) {
-        Equipment equipment = new Equipment();
-        equipment.setName(roomEquipmentDTO.getName());
-        equipment.setPrice(roomEquipmentDTO.getPrice());
-        equipment.setMadein(roomEquipmentDTO.getMadein());
-        equipment.setImage(roomEquipmentDTO.getImage());
-        equipment.setEquipType(roomEquipmentDTO.getEquipType());
-        Equipment newEquipment = equipmentService.addEquipment(equipment);
+//    @PostMapping("/add")
+//    public ResponseEntity<Room_EquipmentDTO> addEquipment(@RequestBody Room_EquipmentDTO roomEquipmentDTO) {
+//        Equipment equipment = new Equipment();
+//        equipment.setName(roomEquipmentDTO.getName());
+//        equipment.setPrice(roomEquipmentDTO.getPrice());
+//        equipment.setMadein(roomEquipmentDTO.getMadein());
+//        equipment.setImage(roomEquipmentDTO.getImage());
+//        equipment.setEquipType(roomEquipmentDTO.getEquipType());
+//        Equipment newEquipment = equipmentService.addEquipment(equipment);
+//
+//        List<Room_Amount> roomAmounts = roomEquipmentDTO.getRoomAmounts();
+//
+//        for (Room_Amount roomAmount : roomAmounts) {
+//            Room_Equipment roomEquipment = new Room_Equipment();
+//            roomEquipment.setEquipment(newEquipment);
+//            roomEquipment.setRoom(roomAmount.getRoom());
+//            roomEquipment.setEquipment(newEquipment);
+//            roomEquipment.setQuantity(roomAmount.getAmount());
+//            room_EquipmentService.createRoom_Equipment(roomEquipment);
+//        }
+//        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
+//    }
 
-        List<Room_Amount> roomAmounts = roomEquipmentDTO.getRoomAmounts();
-
-        for (Room_Amount roomAmount : roomAmounts) {
-            Room_Equipment roomEquipment = new Room_Equipment();
-            roomEquipment.setEquipment(newEquipment);
-            roomEquipment.setRoom(roomAmount.getRoom());
-            roomEquipment.setEquipment(newEquipment);
-            roomEquipment.setQuantity(roomAmount.getAmount());
-            room_EquipmentService.createRoom_Equipment(roomEquipment);
-        }
-        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
+    @PostMapping("/admin/add")
+    public ResponseEntity<Equipment> addEquipment(@RequestBody Equipment equipment) {
+        return new ResponseEntity<>(equipmentService.addEquipment(equipment), HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Room_EquipmentDTO> updateEquipment(@RequestBody Room_EquipmentDTO roomEquipmentDTO, @PathVariable Long id) {
-        Equipment equipment = equipmentService.getEquipment(id);
-//        Room_Equipment roomEquipment = room_EquipmentService.getRoom_EquipmentByRoomAndEquipment(room, equipment);
-        equipment.setName(roomEquipmentDTO.getName());
-        equipment.setPrice(roomEquipmentDTO.getPrice());
-        equipment.setMadein(roomEquipmentDTO.getMadein());
-        equipment.setImage(roomEquipmentDTO.getImage());
-        equipment.setEquipType(roomEquipmentDTO.getEquipType());
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<Room_EquipmentDTO> updateEquipment(@RequestBody Room_EquipmentDTO roomEquipmentDTO, @PathVariable Long id) {
+//        Equipment equipment = equipmentService.getEquipment(id);
+////        Room_Equipment roomEquipment = room_EquipmentService.getRoom_EquipmentByRoomAndEquipment(room, equipment);
+//        equipment.setName(roomEquipmentDTO.getName());
+//        equipment.setPrice(roomEquipmentDTO.getPrice());
+//        equipment.setMadein(roomEquipmentDTO.getMadein());
+//        equipment.setImage(roomEquipmentDTO.getImage());
+//        equipment.setEquipType(roomEquipmentDTO.getEquipType());
 //        Room room = roomEquipmentDTO.getRoom();
 
 //        roomEquipment.setEquipment(equipment);
 //        roomEquipment.setRoom(room);
 //        roomEquipment.setQuantity(roomEquipmentDTO.getQuantity());
-        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
+//        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
+//    }
+
+    @PutMapping("/admin/update/{id}")
+    public ResponseEntity<Equipment> updateEquipment(@RequestBody Equipment equipment, @PathVariable Long id) {
+        return new ResponseEntity<>(equipmentService.updateEquipment(equipment, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
