@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -111,5 +112,15 @@ public class Member_PackageServiceImpl implements Member_PackageService {
         member_package.setAmount(memberPackageSub.getAmount());
         member_package.setEndDate(memberPackageSub.getEndDate());
         return member_packageRepository.save(member_package);
+    }
+
+    @Override
+    public boolean checkExistsByMember(Member member) {
+        return member_packageRepository.existsByMember(member);
+    }
+
+    @Override
+    public List<Member_Package> getTheExpriredMember_Package(Date today) {
+        return member_packageRepository.findByEndDateBefore(today);
     }
 }

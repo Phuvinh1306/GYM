@@ -81,18 +81,16 @@ public class Member_PackageController {
         User user = userService.findByUsername(username).orElseThrow();
         Member member = memberService.getMemberByUser(user);
 
-        memberPackageSub.setMember(member);
-//        Long packId = pack.getId();
-//        Package pack1 = packageService.getPackage(packId);
-//        int totalPrice = pack1.getPrice() * memberPackageSub.getQuantity();
-//        memberPackageSub.setAmount(totalPrice);
-        Member_PackageSub newMemberPackageSub = member_packageSubService.createMember_PackageSub(memberPackageSub);
-
-//        return new ResponseEntity<>(member_packageService.addMember_Package(member_package), HttpStatus.OK);
-        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String vnpayUrl = vnPayService.createOrder(newMemberPackageSub.getAmount(), "pack"+newMemberPackageSub.getId(), baseUrl);
-//        return new RedirectView(vnpayUrl);
-        return new ResponseEntity<>(new VNPayResponse("pay for "+newMemberPackageSub.getPack().getName(), vnpayUrl), HttpStatus.OK);
+        if (member_packageService.checkExistsByMember(member)) {
+            return new ResponseEntity<>(new VNPayResponse("Member already has a package", ""), HttpStatus.BAD_REQUEST);
+        }
+        else {
+            memberPackageSub.setMember(member);
+            Member_PackageSub newMemberPackageSub = member_packageSubService.createMember_PackageSub(memberPackageSub);
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnPayService.createOrder(newMemberPackageSub.getAmount(), "pack"+newMemberPackageSub.getId(), baseUrl);
+            return new ResponseEntity<>(new VNPayResponse("pay for "+newMemberPackageSub.getPack().getName(), vnpayUrl), HttpStatus.OK);
+        }
     }
 
     @PutMapping("admin/update/{id}")

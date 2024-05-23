@@ -74,9 +74,9 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findByNameContaining(name, pageable);
     }
 
-//    @Override
-//    public int countByGymBranch(GymBranch gymBranch) {
-//        return memberRepository.countByGymBranch(gymBranch);
-//    }
+    @Override
+    public int countMemberByGymBranch(GymBranch gymBranch) {
+        return memberRepository.countByGymBranch(gymBranch);
+    }
 
 }

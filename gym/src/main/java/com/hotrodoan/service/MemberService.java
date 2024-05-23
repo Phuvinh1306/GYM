@@ -21,5 +21,5 @@ public interface MemberService {
 
     Page<Member> findMembersByNameContaining(String name, Pageable pageable);
 
-//    int countByGymBranch(GymBranch gymBranch);
+    int countMemberByGymBranch(GymBranch gymBranch);
 }

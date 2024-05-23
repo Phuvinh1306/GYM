@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDate;
 
@@ -32,6 +31,7 @@ public class Member_Package {
 
     private Date startDate;
     private Date endDate;
+    private boolean status;
 
     // Setter method for startDate
 //    public void setStartDate(Date startDate) {

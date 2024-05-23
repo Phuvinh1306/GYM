@@ -1,5 +1,6 @@
 package com.hotrodoan.controller;
 
+import com.hotrodoan.dto.request.BookingSub;
 import com.hotrodoan.dto.response.ResponseMessage;
 import com.hotrodoan.exception.EmployeeNotfoundException;
 import com.hotrodoan.model.Booking;
@@ -51,6 +52,9 @@ public class BookingController {
     @Autowired
     private WorkoutSessionService workoutSessionService;
 
+    @Autowired
+    private BookingSubService bookingSubService;
+
     @GetMapping("/admin/all")
     public ResponseEntity<?> pageBooking(@PageableDefault(sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
         Page<Booking> bookings = bookingService.getAllBooking(pageable);
@@ -74,14 +78,15 @@ public class BookingController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addBooking(HttpServletRequest request, @RequestBody Booking booking) {
-        if (employeeService.existsByIdAndPositionId(booking.getEmployee().getId(), 2L)){
+    public ResponseEntity<?> addBooking(HttpServletRequest request, @RequestBody BookingSub bookingSub) {
+        if (employeeService.existsByIdAndPositionId(bookingSub.getEmployee().getId(), 2L)){
             String jwt = jwtTokenFilter.getJwt(request);
             String username = jwtProvider.getUsernameFromToken(jwt);
             User user = userService.findByUsername(username).orElseThrow();
             Member member = memberService.getMemberByUser(user);
-            booking.setMember(member);
-            Booking newBooking = bookingService.addBooking(booking);
+            bookingSub.setMember(member);
+
+            BookingSub newBookingSub = bo.addBooking(booking);
             WorkoutSession workoutSession = new WorkoutSession();
             workoutSession.setBooking(newBooking);
             workoutSessionService.addWorkoutSession(workoutSession);
