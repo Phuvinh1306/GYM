@@ -1,12 +1,11 @@
 package com.hotrodoan.controller;
 
+import com.hotrodoan.dto.request.BookingSub;
+import com.hotrodoan.model.Booking;
 import com.hotrodoan.model.Member_Package;
 import com.hotrodoan.model.Member_PackageSub;
 import com.hotrodoan.model.VnPayPayment;
-import com.hotrodoan.service.Member_PackageService;
-import com.hotrodoan.service.Member_PackageSubService;
-import com.hotrodoan.service.VNPayService;
-import com.hotrodoan.service.VnPayPaymentService;
+import com.hotrodoan.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -34,6 +33,12 @@ public class VNPayController {
 
     @Autowired
     private Member_PackageSubService member_packageSubService;
+
+    @Autowired
+    private BookingService bookingService;
+
+    @Autowired
+    private BookingSubService bookingSubService;
 
 
     @GetMapping("/pay")
@@ -94,6 +99,12 @@ public class VNPayController {
                 Member_PackageSub memberPackageSub = member_packageSubService.getMember_PackageSub(id);
                 member_packageService.createMember_PackageBySub(memberPackageSub);
                 member_packageSubService.deleteMember_PackageSub(id);
+            } else if (orderInfo.contains("booking")) {
+                String idString = orderInfo.replace("booking", "");
+                Long id = Long.parseLong(idString);
+                BookingSub bookingSub = bookingSubService.getBookingSub(id);
+                bookingService.addBookingByBookingSub(bookingSub);
+                bookingSubService.deleteBookingSub(id);
             }
             return "ordersuccess";
         }else

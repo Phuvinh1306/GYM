@@ -32,4 +32,5 @@ public class Booking {
 
 //    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy' 'HH:mm:ss")
     private Timestamp endTime;
+    private int cost;
 }

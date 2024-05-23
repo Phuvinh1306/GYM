@@ -17,7 +17,7 @@ public class Member_PackageScheduler {
     @Autowired
     private Member_PackageService member_packageService;
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 60000)
     public void checkAndDeleteMember_Package(){
         Date today = new Date(System.currentTimeMillis());
         List<Member_Package> expiredMember_Packages = member_packageService.getTheExpriredMember_Package(today);

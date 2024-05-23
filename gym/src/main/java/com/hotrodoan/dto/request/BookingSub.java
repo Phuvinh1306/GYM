@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,4 +30,5 @@ public class BookingSub {
     private Timestamp bookingTime;
 
     private Timestamp endTime;
+    private int cost;
 }

@@ -1,5 +1,6 @@
 package com.hotrodoan.service.impl;
 
+import com.hotrodoan.dto.request.BookingSub;
 import com.hotrodoan.exception.EmployeeNotfoundException;
 import com.hotrodoan.model.Booking;
 import com.hotrodoan.model.Employee;
@@ -56,6 +57,17 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public Booking addBookingByBookingSub(BookingSub bookingSub) {
+        Booking booking = new Booking();
+        booking.setMember(bookingSub.getMember());
+        booking.setEmployee(bookingSub.getEmployee());
+        booking.setBookingTime(bookingSub.getBookingTime());
+        booking.setEndTime(bookingSub.getEndTime());
+        booking.setCost(bookingSub.getCost());
+        return bookingRepository.save(booking);
+    }
+
+    @Override
     public void deleteBooking(Long id) {
         if (!bookingRepository.existsById(id)) {
             throw new EmployeeNotfoundException("Không tìm thấy booking");
@@ -97,6 +109,7 @@ public class BookingServiceImpl implements BookingService {
             bk.setEmployee(booking.getEmployee());
             bk.setBookingTime(booking.getBookingTime());
             bk.setEndTime(booking.getEndTime());
+            bk.setCost(booking.getCost());
             return bookingRepository.save(bk);
         }).orElseThrow(() -> new EmployeeNotfoundException("Không tìm thấy booking"));
     }

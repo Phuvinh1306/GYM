@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.io.IOException;
 
 @SpringBootApplication
-@EnableScheduling
+//@EnableScheduling
 @CrossOrigin(origins = "*")
 public class GymApplication {
 	public static void main(String[] args) {

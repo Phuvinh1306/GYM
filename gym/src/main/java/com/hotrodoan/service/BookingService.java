@@ -1,5 +1,6 @@
 package com.hotrodoan.service;
 
+import com.hotrodoan.dto.request.BookingSub;
 import com.hotrodoan.model.Booking;
 import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.Member;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 public interface BookingService {
     Booking addBooking(Booking booking);
+    Booking addBookingByBookingSub(BookingSub bookingSub);
     void deleteBooking(Long id);
     Page<Booking> getAllBooking(Pageable pageable);
 

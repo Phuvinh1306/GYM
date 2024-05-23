@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.sql.Timestamp;
 import java.util.List;
 
-//@Component
+@Component
 public class BookingScheduler {
     private static final Logger logger = LoggerFactory.getLogger(BookingScheduler.class);
     @Autowired
@@ -21,7 +21,7 @@ public class BookingScheduler {
     @Autowired
     private HistoryService historyService;
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 60000)
     public void addHistoryFromBooking() {
         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
         List<Booking> expiredBookings = bookingService.findByEndTimeBefore(currentTime);

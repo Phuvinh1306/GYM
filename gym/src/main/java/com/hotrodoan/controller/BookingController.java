@@ -2,6 +2,7 @@ package com.hotrodoan.controller;
 
 import com.hotrodoan.dto.request.BookingSub;
 import com.hotrodoan.dto.response.ResponseMessage;
+import com.hotrodoan.dto.response.VNPayResponse;
 import com.hotrodoan.exception.EmployeeNotfoundException;
 import com.hotrodoan.model.Booking;
 import com.hotrodoan.model.Member;
@@ -22,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -55,6 +58,12 @@ public class BookingController {
     @Autowired
     private BookingSubService bookingSubService;
 
+    @Autowired
+    private VNPayService vnPayService;
+
+    @Autowired
+    private Member_PackageService member_packageService;
+
     @GetMapping("/admin/all")
     public ResponseEntity<?> pageBooking(@PageableDefault(sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
         Page<Booking> bookings = bookingService.getAllBooking(pageable);
@@ -78,20 +87,30 @@ public class BookingController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addBooking(HttpServletRequest request, @RequestBody BookingSub bookingSub) {
+    public ResponseEntity<VNPayResponse> addBooking(HttpServletRequest request, @RequestBody BookingSub bookingSub) {
         if (employeeService.existsByIdAndPositionId(bookingSub.getEmployee().getId(), 2L)){
             String jwt = jwtTokenFilter.getJwt(request);
             String username = jwtProvider.getUsernameFromToken(jwt);
             User user = userService.findByUsername(username).orElseThrow();
             Member member = memberService.getMemberByUser(user);
             bookingSub.setMember(member);
+            if (member_packageService.checkExistsByMember(member)) {
+                bookingSub.setCost(0);
+            }
+            else {
+                LocalDate bookingTime = bookingSub.getBookingTime().toLocalDateTime().toLocalDate();
+                LocalDate endTime = bookingSub.getEndTime().toLocalDateTime().toLocalDate();
+                int days = (int) ChronoUnit.DAYS.between(bookingTime, endTime);
+                bookingSub.setCost(80000 * (days+1));
+            }
 
-            BookingSub newBookingSub = bo.addBooking(booking);
-            WorkoutSession workoutSession = new WorkoutSession();
-            workoutSession.setBooking(newBooking);
-            workoutSessionService.addWorkoutSession(workoutSession);
-
-            return new ResponseEntity<>(newBooking, HttpStatus.OK);
+            BookingSub newBookingSub = bookingSubService.createBookingSub(bookingSub);
+//            WorkoutSession workoutSession = new WorkoutSession();
+//            workoutSession.setBooking(newBooking);
+//            workoutSessionService.addWorkoutSession(workoutSession);
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnPayService.createOrder(newBookingSub.getCost(), "booking"+newBookingSub.getId(), baseUrl);
+            return new ResponseEntity<>(new VNPayResponse("pay for booking at "+newBookingSub.getBookingTime().toString(), vnpayUrl), HttpStatus.OK);
         }
         else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
