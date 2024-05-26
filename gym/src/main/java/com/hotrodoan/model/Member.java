@@ -23,12 +23,11 @@ public class Member{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 3, max = 150)
-    private String name;
-
     @Column(unique = true)
     @Pattern(regexp = "(\\d{4}[-.]?\\d{3}[-.]?\\d{3})", message = "Số điện thoại phải bao gồm 10 chữ số và có thể có dấu chấm hoặc dấu gạch ngang giữa các phần tử")
     private String phone;
+
+    private String address;
 
     @Column(unique = true)
     @Pattern(regexp = "\\d{12}", message = "CCCD phải bao gồm 12 chữ số")
@@ -52,9 +51,4 @@ public class Member{
 
     @ManyToOne
     private GymBranch gymBranch;
-
-    @PrePersist
-    public void onCreate() {
-        createdAt = new Date();
-    }
 }

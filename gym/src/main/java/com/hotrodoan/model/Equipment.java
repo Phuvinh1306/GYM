@@ -30,7 +30,9 @@ public class Equipment {
     private double price;
     private String madein = "Việt Nam";
 
-    private String image;
+    @OneToOne
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image image;
 
     @ManyToOne
     private EquipType equipType;

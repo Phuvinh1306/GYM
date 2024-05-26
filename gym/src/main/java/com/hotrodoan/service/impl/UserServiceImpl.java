@@ -63,4 +63,19 @@ public class UserServiceImpl implements UserService {
             return true;
         }
     }
+
+    @Override
+    public User update(User user, Long id) {
+        return userRepository.findById(id)
+                .map(user1 -> {
+                    user1.setName(user.getName());
+                    user1.setUsername(user.getUsername());
+                    user1.setEmail(user.getEmail());
+                    user1.setPassword(user.getPassword());
+                    user1.setAvatar(user.getAvatar());
+                    user1.setImage(user.getImage());
+                    return userRepository.save(user1);
+                })
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+    }
 }

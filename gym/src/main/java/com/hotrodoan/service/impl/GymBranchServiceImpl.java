@@ -31,6 +31,7 @@ public class GymBranchServiceImpl implements GymBranchService {
             gb.setName(gymBranch.getName());
             gb.setAddress(gymBranch.getAddress());
             gb.setManager(gymBranch.getManager());
+            gb.setImage(gymBranch.getImage());
             return gymBranchRepository.save(gb);
         }).orElseThrow(() -> new RuntimeException("Gym branch not found"));
     }

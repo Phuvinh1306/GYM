@@ -19,7 +19,7 @@ public interface MemberService {
 
     Page<Member> getAllMember(Pageable pageable);
 
-    Page<Member> findMembersByNameContaining(String name, Pageable pageable);
+    Page<Member> findMembersByAddressContaining(String address, Pageable pageable);
 
     int countMemberByGymBranch(GymBranch gymBranch);
 }

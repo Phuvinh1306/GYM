@@ -5,12 +5,14 @@ import com.hotrodoan.dto.request.LoginForm;
 import com.hotrodoan.dto.request.SignupForm;
 import com.hotrodoan.dto.response.JwtResponse;
 import com.hotrodoan.dto.response.ResponseMessage;
+import com.hotrodoan.model.Member;
 import com.hotrodoan.model.Role;
 import com.hotrodoan.model.RoleName;
 import com.hotrodoan.model.User;
 import com.hotrodoan.security.jwt.JwtProvider;
 import com.hotrodoan.security.jwt.JwtTokenFilter;
 import com.hotrodoan.security.userdetail.UserDetail;
+import com.hotrodoan.service.MemberService;
 import com.hotrodoan.service.RoleService;
 import com.hotrodoan.service.UserService;
 import jakarta.mail.MessagingException;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import net.bytebuddy.utility.RandomString;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -63,8 +66,8 @@ public class AuthController {
     @Autowired
     private JavaMailSender javaMailSender;
 
-//    @Autowired
-//    private FirebaseAuth firebaseAuth;
+    @Autowired
+    private MemberService memberService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(@Valid @RequestBody SignupForm signupForm, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
@@ -115,6 +118,12 @@ public class AuthController {
 
         String siteURL = Utility.getSiteURL(request);
         sendVertificationEmail(user, siteURL);
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Member member = new Member();
+        member.setUser(user);
+        member.setCreatedAt(timestamp);
+        memberService.addMember(member);
         return new ResponseEntity<>(new ResponseMessage("create_success"), HttpStatus.OK);
     }
 
@@ -168,8 +177,6 @@ public class AuthController {
             String token = jwtProvider.createToken(authentication);
             return ResponseEntity.ok(new JwtResponse(token, userDetail.getId(), userDetail.getName(), userDetail.getAuthorities(), userDetail.getAvatar()));
         }
-
-
     }
 
     

@@ -3,19 +3,24 @@ package com.hotrodoan.controller;
 import com.hotrodoan.dto.request.Room_Amount;
 import com.hotrodoan.dto.request.Room_EquipmentDTO;
 import com.hotrodoan.dto.response.ResponseMessage;
-import com.hotrodoan.model.Equipment;
-import com.hotrodoan.model.Room;
-import com.hotrodoan.model.Room_Equipment;
+import com.hotrodoan.model.*;
 import com.hotrodoan.service.EquipmentService;
+import com.hotrodoan.service.ImageService;
 import com.hotrodoan.service.Room_EquipmentService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Set;
@@ -28,6 +33,8 @@ public class EquipmentController {
     private EquipmentService equipmentService;
     @Autowired
     private Room_EquipmentService room_EquipmentService;
+    @Autowired
+    private ImageService imageService;
 
 //    @GetMapping("")
 //    public ResponseEntity<Page<Equipment>> getAllEquipment(@RequestParam(defaultValue = "0") int page,
@@ -61,8 +68,22 @@ public class EquipmentController {
 //        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
 //    }
 
-    @PostMapping("/admin/add")
-    public ResponseEntity<Equipment> addEquipment(@RequestBody Equipment equipment) {
+    @PostMapping(value = "/admin/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Equipment> addEquipment(@RequestParam("name") String name,
+                                                 @RequestParam("price") double price,
+                                                 @RequestParam("madein") String madein,
+                                                 @RequestParam(value = "file", required = false) MultipartFile file,
+                                                 @RequestParam EquipType equipType) throws Exception{
+        Equipment equipment = new Equipment();
+        equipment.setName(name);
+        equipment.setPrice(price);
+        equipment.setMadein(madein);
+        equipment.setEquipType(equipType);
+
+        if (file != null && !file.isEmpty()) {
+            Image image = imageService.saveImage(file);
+            equipment.setImage(image);
+        }
         return new ResponseEntity<>(equipmentService.addEquipment(equipment), HttpStatus.OK);
     }
 
@@ -83,9 +104,43 @@ public class EquipmentController {
 //        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
 //    }
 
-    @PutMapping("/admin/update/{id}")
-    public ResponseEntity<Equipment> updateEquipment(@RequestBody Equipment equipment, @PathVariable Long id) {
+    @PutMapping(value = "/admin/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Equipment> updateEquipment(@RequestParam("name") String name,
+                                                     @RequestParam("price") double price,
+                                                     @RequestParam("madein") String madein,
+                                                     @RequestParam(value = "file", required = false) MultipartFile file,
+                                                     @RequestParam EquipType equipType,
+                                                     @PathVariable Long id) throws Exception {
+        Equipment equipment = equipmentService.getEquipment(id);
+        String imageId = null;
+        equipment.setName(name);
+        equipment.setPrice(price);
+        equipment.setMadein(madein);
+        equipment.setEquipType(equipType);
+
+        if (file != null && !file.isEmpty()) {
+            Image image = imageService.saveImage(file);
+            if (equipment.getImage() != null && !equipment.getImage().equals("")) {
+                imageId = equipment.getImage().getId();
+                equipment.setImage(image);
+                Equipment updatedEquipment = equipmentService.updateEquipment(equipment, id);
+                imageService.deleteImage(imageId);
+                return new ResponseEntity<>(updatedEquipment, HttpStatus.OK);
+            }else {
+                equipment.setImage(image);
+                Equipment updatedEquipment = equipmentService.updateEquipment(equipment, id);
+                return new ResponseEntity<>(updatedEquipment, HttpStatus.OK);
+            }
+        }
         return new ResponseEntity<>(equipmentService.updateEquipment(equipment, id), HttpStatus.OK);
+    }
+    @GetMapping("/{id}/image")
+    public ResponseEntity<Resource> viewImage(@PathVariable("id") Long id) throws Exception {
+        Equipment equipment = equipmentService.getEquipment(id);
+        Image image = equipment.getImage();
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .body(new ByteArrayResource(image.getData()));
     }
 
     @DeleteMapping("/delete/{id}")

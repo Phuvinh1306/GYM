@@ -25,4 +25,6 @@ public class Room {
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "room")
     @JsonIgnore
     private List<Room_Equipment> roomEquipments;
+    @OneToOne
+    private Image image;
 }

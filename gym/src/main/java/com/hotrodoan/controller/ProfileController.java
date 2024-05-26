@@ -1,19 +1,28 @@
 package com.hotrodoan.controller;
 
 import com.hotrodoan.dto.request.ChangePasswordForm;
+import com.hotrodoan.dto.request.UpdateProfileForm;
 import com.hotrodoan.dto.response.ResponseMessage;
+import com.hotrodoan.model.Image;
 import com.hotrodoan.model.Member;
 import com.hotrodoan.model.User;
 import com.hotrodoan.security.jwt.JwtProvider;
 import com.hotrodoan.security.jwt.JwtTokenFilter;
+import com.hotrodoan.service.ImageService;
+import com.hotrodoan.service.MemberService;
 import com.hotrodoan.service.ProfileService;
 import com.hotrodoan.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -36,6 +45,12 @@ public class ProfileController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private MemberService memberService;
+
     @GetMapping("")
 //    public ResponseEntity<?> getProfile(HttpServletRequest request) {
 //        String jwt = jwtTokenFilter.getJwt(request);
@@ -43,22 +58,64 @@ public class ProfileController {
 //        User user = userService.findByUsername(username).orElseThrow();
 //        return new ResponseEntity<>(user, HttpStatus.OK);
 //    }
-    public ResponseEntity<?> getProfile(HttpServletRequest request) {
+    public ResponseEntity<UpdateProfileForm> getProfile(HttpServletRequest request) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
-        Member member = profileService.getProfileMember(user);
-        return new ResponseEntity<>(member, HttpStatus.OK);
+        Member member = memberService.getMemberByUser(user);
+        UpdateProfileForm updateProfileForm = new UpdateProfileForm();
+        updateProfileForm.setName(user.getName());
+        updateProfileForm.setPhone(member.getPhone());
+        updateProfileForm.setCccd(member.getCccd());
+        updateProfileForm.setSex(member.getSex());
+        updateProfileForm.setCreatedAt(member.getCreatedAt());
+        return new ResponseEntity<>(updateProfileForm, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<?> updateProfile(HttpServletRequest request, @RequestBody Member member) {
+    @GetMapping("/avatar")
+    public ResponseEntity<Resource> viewImage(HttpServletRequest request) throws Exception {
+        String token = jwtTokenFilter.getJwt(request);
+        String username = jwtProvider.getUsernameFromToken(token);
+        User user = userService.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        Image image = user.getImage();
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(image.getFileType()))
+                .body(new ByteArrayResource(image.getData()));
+    }
+
+    @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Member> updateProfile(HttpServletRequest request,
+                                           @RequestParam("name") String name,
+                                           @RequestParam("phone") String phone,
+                                           @RequestParam("cccd") String cccd,
+                                           @RequestParam("sex") String sex,
+                                           @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
-        Member member1 = profileService.getProfileMember(user);
-        member.setUser(user);
-        return new ResponseEntity<>(profileService.updateProfile(member, member1.getId()), HttpStatus.OK);
+        Long id = user.getId();
+        Member member = profileService.getProfileMember(user);
+        user.setName(name);
+        member.setPhone(phone);
+        member.setCccd(cccd);
+        member.setSex(sex);
+
+        if (file != null && !file.isEmpty()){
+            String oldImageId = null;
+            if (user.getImage() != null && !user.getImage().equals("")) {
+                oldImageId = user.getImage().getId();
+            }
+            Image image = imageService.saveImage(file);
+            user.setImage(image);
+
+            userService.update(user, id);
+            if (oldImageId != null) {
+                imageService.deleteImage(oldImageId);
+            }
+        }
+
+        profileService.updateProfile(member, member.getId());
+        return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
     @PutMapping("/change-password")

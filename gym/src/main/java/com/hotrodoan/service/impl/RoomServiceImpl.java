@@ -40,6 +40,7 @@ public class RoomServiceImpl implements RoomService {
     public Room updateRoom(Room room, Long id) {
         return roomRepository.findById(id).map(po -> {
             po.setName(room.getName());
+            po.setImage(room.getImage());
 
 //            Set<Equipment> equipments = new HashSet<>(room.getEquipment());
 //            po.setEquipment(equipments);

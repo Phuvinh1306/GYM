@@ -41,4 +41,9 @@ public class ImageServiceImpl implements ImageService {
                 .orElseThrow(
                         () -> new RuntimeException("Not found image"));
     }
+
+    @Override
+    public void deleteImage(String imageId) throws Exception {
+        imageRepository.deleteById(imageId);
+    }
 }

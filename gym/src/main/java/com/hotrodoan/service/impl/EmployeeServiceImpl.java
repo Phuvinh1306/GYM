@@ -46,11 +46,11 @@ public class EmployeeServiceImpl implements EmployeeService {
             ep.setDob(employee.getDob());
             ep.setCccd(employee.getCccd());
             ep.setPhone(employee.getPhone());
-            ep.setEmail(employee.getEmail());
             ep.setAddress(employee.getAddress());
             ep.setStartWork(employee.getStartWork());
             ep.setSex(employee.getSex());
             ep.setAvatar(employee.getAvatar());
+            ep.setUser(employee.getUser());
             return employeeRepository.save(ep);
         }).orElseThrow(() -> new EmployeeNotfoundException("Không tìm thấy nhân viên"));
     }

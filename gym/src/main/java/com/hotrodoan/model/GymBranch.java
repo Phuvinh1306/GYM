@@ -25,4 +25,6 @@ public class GymBranch {
     private List<Member> members;
     @Column(nullable = true)
     private int totalMember=0;
+    @OneToOne
+    private Image image;
 }

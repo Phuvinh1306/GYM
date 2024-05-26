@@ -20,4 +20,5 @@ public interface UserService {
     void deleteUser(Long id);
 
     public boolean verify(String verificationCode);
+    User update(User user, Long id);
 }

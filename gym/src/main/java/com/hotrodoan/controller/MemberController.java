@@ -82,6 +82,6 @@ public class MemberController {
                                                                         @RequestParam(defaultValue = "id") String sortBy,
                                                                         @RequestParam(defaultValue = "desc") String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-        return new ResponseEntity<>(memberService.findMembersByNameContaining(name, pageable), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.findMembersByAddressContaining(name, pageable), HttpStatus.OK);
     }
 }

@@ -36,10 +36,6 @@ public class Employee {
     @Pattern(regexp = "(\\d{4}[-.]?\\d{3}[-.]?\\d{3})", message = "Số điện thoại phải bao gồm 10 chữ số và có thể có dấu chấm hoặc dấu gạch ngang giữa các phần tử")
     private String phone;
 
-    @Column(unique = true, nullable = false)
-    @Email
-    private String email;
-
     private String address;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy' 'HH:mm:ss")
@@ -54,12 +50,11 @@ public class Employee {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
 
-    @PrePersist
-    public void onCreate() {
-        createdAt = new Date();
-    }
-
     @ManyToOne
     @JoinColumn(name = "position_id")
     private Position position;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

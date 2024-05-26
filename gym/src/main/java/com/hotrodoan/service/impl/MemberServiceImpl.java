@@ -47,7 +47,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member updateMember(Member member, Long id) {
         return memberRepository.findById(id).map(mb -> {
-            mb.setName(member.getName());
             mb.setPhone(member.getPhone());
             mb.setCccd(member.getCccd());
             mb.setSex(member.getSex());
@@ -70,8 +69,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Page<Member> findMembersByNameContaining(String name, Pageable pageable) {
-        return memberRepository.findByNameContaining(name, pageable);
+    public Page<Member> findMembersByAddressContaining(String address, Pageable pageable) {
+        return memberRepository.findByAddressContaining(address, pageable);
     }
 
     @Override

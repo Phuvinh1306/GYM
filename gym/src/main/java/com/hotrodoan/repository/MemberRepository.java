@@ -13,6 +13,6 @@ import org.springframework.stereotype.Repository;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findByUser(User user);
     Page<Member> findAll(Pageable pageable);
-    Page<Member> findByNameContaining(String name, Pageable pageable);
+    Page<Member> findByAddressContaining(String address, Pageable pageable);
     int countByGymBranch(GymBranch gymBranch);
 }
