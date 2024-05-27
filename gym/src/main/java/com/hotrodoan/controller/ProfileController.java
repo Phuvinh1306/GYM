@@ -86,11 +86,11 @@ public class ProfileController {
 
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Member> updateProfile(HttpServletRequest request,
-                                           @RequestParam("name") String name,
-                                           @RequestParam("phone") String phone,
-                                           @RequestParam("cccd") String cccd,
-                                           @RequestParam("sex") String sex,
-                                           @RequestParam("gymBranch") GymBranch gymBranch,
+                                           @RequestParam(value = "name", required = false) String name,
+                                           @RequestParam(value = "phone", required = false) String phone,
+                                           @RequestParam(value = "cccd", required = false) String cccd,
+                                           @RequestParam(value = "sex", required = false) String sex,
+                                           @RequestParam(value = "gymBranch", required = false) GymBranch gymBranch,
                                            @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
