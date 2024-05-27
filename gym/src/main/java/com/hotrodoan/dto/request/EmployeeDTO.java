@@ -29,5 +29,4 @@ public class EmployeeDTO {
     private Date startWork;
     private String sex;
     private Position position;
-    private Set<String> roles;
 }

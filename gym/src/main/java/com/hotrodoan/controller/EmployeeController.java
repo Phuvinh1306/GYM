@@ -53,7 +53,6 @@ public class EmployeeController {
         user.setUsername(employeeDTO.getUsername());
         user.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
         user.setEmail(employeeDTO.getEmail());
-        Set<String> strRoles = employeeDTO.getRoles();
         Set<Role> roles = new HashSet<>();
 
         Employee employee = new Employee();
@@ -64,20 +63,18 @@ public class EmployeeController {
         employee.setAddress(employeeDTO.getAddress());
         employee.setStartWork(employeeDTO.getStartWork());
         employee.setSex(employeeDTO.getSex());
+        employee.setPosition(employeeDTO.getPosition());
         employee.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
-        strRoles.forEach(role -> {
-            switch (role){
-                case "manager":
-                    Role managerRole = roleService.findByName(RoleName.MANAGER).orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(managerRole);
-                    break;
-                case "employee":
-                    Role pmRole = roleService.findByName(RoleName.EMPLOYEE).orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(pmRole);
-                    break;
-            }
-        });
+        if (employeeDTO.getPosition().getId() == 3){
+            Role managerRole = roleService.findByName(RoleName.MANAGER).orElseThrow(() -> new RuntimeException("Role not found"));
+            roles.add(managerRole);
+        }
+        else {
+            Role pmRole = roleService.findByName(RoleName.EMPLOYEE).orElseThrow(() -> new RuntimeException("Role not found"));
+            roles.add(pmRole);
+        }
+
         user.setRoles(roles);
         User newUser = userService.save(user);
         employee.setUser(newUser);
@@ -90,30 +87,21 @@ public class EmployeeController {
         Employee employee = employeeService.getEmployee(id);
         User user = employee.getUser();
         user.setName(employeeDTO.getName());
-        user.setUsername(employeeDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
-        user.setEmail(employeeDTO.getEmail());
-
-        Set<String> strRoles = employeeDTO.getRoles();
         Set<Role> roles = new HashSet<>();
+
         employee.setName(employeeDTO.getFullName());
         employee.setDob(employeeDTO.getDob());
-        employee.setCccd(employeeDTO.getCccd());
         employee.setPhone(employeeDTO.getPhone());
         employee.setAddress(employeeDTO.getAddress());
+        if (employeeDTO.getPosition().getId() == 3){
+            Role managerRole = roleService.findByName(RoleName.MANAGER).orElseThrow(() -> new RuntimeException("Role not found"));
+            roles.add(managerRole);
+        }
+        else {
+            Role pmRole = roleService.findByName(RoleName.EMPLOYEE).orElseThrow(() -> new RuntimeException("Role not found"));
+            roles.add(pmRole);
+        }
 
-        strRoles.forEach(role -> {
-            switch (role){
-                case "manager":
-                    Role managerRole = roleService.findByName(RoleName.MANAGER).orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(managerRole);
-                    break;
-                case "employee":
-                    Role pmRole = roleService.findByName(RoleName.EMPLOYEE).orElseThrow(() -> new RuntimeException("Role not found"));
-                    roles.add(pmRole);
-                    break;
-            }
-        });
         user.setRoles(roles);
         User updatedUser = userService.save(user);
         employee.setUser(updatedUser);
@@ -144,7 +132,6 @@ public class EmployeeController {
         employeeDTO.setPosition(employee.getPosition());
         Set<String> roles = new HashSet<>();
         roles.add(employee.getUser().getRoles().toString());
-        employeeDTO.setRoles(roles);
         return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
     }
 

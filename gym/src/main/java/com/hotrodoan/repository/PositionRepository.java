@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PositionRepository extends JpaRepository<Position, Long> {
     Page<Position> findByNameContaining(String name, Pageable pageable);
+    Position findByName(String name);
 }
