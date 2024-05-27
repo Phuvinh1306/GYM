@@ -3,6 +3,7 @@ package com.hotrodoan.controller;
 import com.hotrodoan.dto.request.ChangePasswordForm;
 import com.hotrodoan.dto.request.UpdateProfileForm;
 import com.hotrodoan.dto.response.ResponseMessage;
+import com.hotrodoan.model.GymBranch;
 import com.hotrodoan.model.Image;
 import com.hotrodoan.model.Member;
 import com.hotrodoan.model.User;
@@ -89,6 +90,7 @@ public class ProfileController {
                                            @RequestParam("phone") String phone,
                                            @RequestParam("cccd") String cccd,
                                            @RequestParam("sex") String sex,
+                                           @RequestParam("gymBranch") GymBranch gymBranch,
                                            @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
@@ -99,6 +101,7 @@ public class ProfileController {
         member.setPhone(phone);
         member.setCccd(cccd);
         member.setSex(sex);
+        member.setGymBranch(gymBranch);
 
         if (file != null && !file.isEmpty()){
             String oldImageId = null;
