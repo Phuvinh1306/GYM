@@ -23,6 +23,7 @@ public class Room {
     private String name;
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "room")
