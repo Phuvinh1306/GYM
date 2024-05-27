@@ -17,6 +17,8 @@ public class GymBranch {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Lob
+    private String description;
     private String address;
     @OneToOne
     private Employee manager;

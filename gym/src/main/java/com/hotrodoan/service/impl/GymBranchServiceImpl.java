@@ -29,6 +29,7 @@ public class GymBranchServiceImpl implements GymBranchService {
     public GymBranch updateGymBranch(GymBranch gymBranch, Long id) {
         return gymBranchRepository.findById(id).map(gb -> {
             gb.setName(gymBranch.getName());
+            gb.setDescription(gymBranch.getDescription());
             gb.setAddress(gymBranch.getAddress());
             gb.setManager(gymBranch.getManager());
             gb.setImage(gymBranch.getImage());

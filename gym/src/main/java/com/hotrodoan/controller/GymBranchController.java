@@ -74,6 +74,7 @@ public class GymBranchController {
             throw new RuntimeException("Room is duplicated!");
         }else {
             GymBranch gymBranch = new GymBranch();
+            gymBranch.setDescription(gymBranchRoomDTO.getDescription());
             gymBranch.setName(gymBranchRoomDTO.getBranchGymName());
             gymBranch.setAddress(gymBranchRoomDTO.getAddress());
             gymBranch.setManager(gymBranchRoomDTO.getManager());
@@ -134,6 +135,7 @@ public class GymBranchController {
             throw new RuntimeException("Room is duplicated!");
         }
         else {
+            gymBranch.setDescription(gymBranchRoomDTO.getDescription());
             gymBranch.setName(gymBranchRoomDTO.getBranchGymName());
             gymBranch.setAddress(gymBranchRoomDTO.getAddress());
             GymBranch updateGymBranch = gymBranchService.updateGymBranch(gymBranch, id);
@@ -226,6 +228,7 @@ public class GymBranchController {
     public ResponseEntity<GymBranch_RoomDTO> getGymBranchRoom(@PathVariable("id") Long id) {
         GymBranch gymBranch = gymBranchService.getGymBranchById(id);
         GymBranch_RoomDTO gymBranch_RoomDTO = new GymBranch_RoomDTO();
+        gymBranch_RoomDTO.setDescription(gymBranch.getDescription());
         gymBranch_RoomDTO.setBranchGymName(gymBranch.getName());
         gymBranch_RoomDTO.setAddress(gymBranch.getAddress());
         gymBranch_RoomDTO.setManager(gymBranch.getManager());

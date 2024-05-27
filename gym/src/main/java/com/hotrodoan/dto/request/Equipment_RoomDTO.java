@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Equipment_RoomDTO {
+    private String description;
     private String name;
     private List<Equipment_Amount> equipmentAmounts;
 }

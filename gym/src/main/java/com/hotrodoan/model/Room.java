@@ -22,6 +22,9 @@ public class Room {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Lob
+    private String description;
+
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "room")
     @JsonIgnore
     private List<Room_Equipment> roomEquipments;

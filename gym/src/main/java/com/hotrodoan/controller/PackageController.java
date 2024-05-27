@@ -4,6 +4,7 @@ import com.hotrodoan.dto.response.ResponseMessage;
 import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.Image;
 import com.hotrodoan.model.Package;
+import com.hotrodoan.service.ImageService;
 import com.hotrodoan.service.PackageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,8 @@ public class PackageController {
 
     @Autowired
     private PackageService packageService;
+    @Autowired
+    private ImageService imageService;
 
 //    @GetMapping("")
 //    public ResponseEntity<Page<Package>> getAllPackage(@RequestParam(defaultValue = "0") int page,
@@ -45,49 +48,61 @@ public class PackageController {
     // public ResponseEntity<Package> addPackage(@RequestBody Package pack) {
     //     return new ResponseEntity<>(packageService.addPackage(pack), HttpStatus.OK);
     // }
-    @PostMapping("/add")
-    public ResponseEntity<Package> addPackage(@RequestParam(value = "image", required = false) MultipartFile image, @RequestParam("name") String name, @RequestParam("price") int price) throws IOException {
-        String imagePath;
-        if (image == null || image.isEmpty()) {
-            imagePath = "/src/main/resources/static/images/package/default.png";
-        } else {
-            String originalFilename = image.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
-            String newFilename = System.currentTimeMillis() + "_" + new SecureRandom().nextInt() + extension;
-            Path filePath = UPLOAD_DIR.resolve(newFilename);
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            imagePath = "/src/main/resources/static/images/package/" + newFilename;
-        }
-
+    @PostMapping("/admin/add")
+    public ResponseEntity<Package> addPackage(@RequestParam(value = "file", required = false) MultipartFile file,
+                                              @RequestParam("name") String name,
+                                              @RequestParam("price") int price,
+                                              @RequestParam("duration") int duration) throws Exception {
+//        String imagePath;
+//        if (image == null || image.isEmpty()) {
+//            imagePath = "/src/main/resources/static/images/package/default.png";
+//        } else {
+//            String originalFilename = image.getOriginalFilename();
+//            String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+//            String newFilename = System.currentTimeMillis() + "_" + new SecureRandom().nextInt() + extension;
+//            Path filePath = UPLOAD_DIR.resolve(newFilename);
+//            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+//            imagePath = "/src/main/resources/static/images/package/" + newFilename;
+//        }
         Package pack = new Package();
         pack.setName(name);
         pack.setPrice(price);
-        pack.setImage(imagePath);
+        pack.setDuration(duration);
+        if (file != null){
+            Image image = imageService.saveImage(file);
+            pack.setImage(image);
+        }
         return new ResponseEntity<>(packageService.addPackage(pack), HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Package> updatePackage(@RequestParam("image") MultipartFile image, @RequestParam("name") String name, @RequestParam("price") int price, @PathVariable Long id) throws IOException{
-        String imagePath;
-        if (image.isEmpty()) {
-            imagePath = "/src/main/resources/static/images/package/default.jpg";
-        } else {
-            String originalFilename = image.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
-            String newFilename = System.currentTimeMillis() + "_" + new SecureRandom().nextInt() + extension;
-            Path filePath = UPLOAD_DIR.resolve(newFilename);
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            imagePath = "/src/main/resources/static/images/package/" + newFilename;
-        }
-
-        Package pack = new Package();
+    @PutMapping("/admin/update/{id}")
+    public ResponseEntity<Package> updatePackage(@RequestParam(value = "file", required = false) MultipartFile file,
+                                                 @RequestParam("name") String name,
+                                                 @RequestParam("price") int price,
+                                                 @RequestParam("duration") int duration,
+                                                 @PathVariable Long id) throws Exception{
+        Package pack = packageService.getPackage(id);
         pack.setName(name);
         pack.setPrice(price);
-        pack.setImage(imagePath);
-        return new ResponseEntity<>(packageService.updatePackage(pack, id), HttpStatus.OK);
+        pack.setDuration(duration);
+        if (file != null && !file.isEmpty()){
+            String oldImageId = null;
+            Image image = imageService.saveImage(file);
+            if (pack.getImage() != null && !pack.getImage().equals("")) {
+                oldImageId = pack.getImage().getId();
+            }
+            pack.setImage(image);
+            Package updatedPackage = packageService.updatePackage(pack, id);
+            if (oldImageId != null) {
+                imageService.deleteImage(oldImageId);
+            }
+            return new ResponseEntity<>(updatedPackage, HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(packageService.updatePackage(pack, id), HttpStatus.OK);
+        }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/admin/delete/{id}")
     public ResponseEntity<?> deletePackage(@PathVariable("id") Long id) {
         packageService.deletePackage(id);
         return new ResponseEntity<>(new ResponseMessage("deleted"), HttpStatus.OK);
@@ -96,10 +111,6 @@ public class PackageController {
     @GetMapping("/{id}")
     public ResponseEntity<Package> getPackage(@PathVariable("id") Long id) {
         Package pack = packageService.getPackage(id);
-        String imagePath = System.getProperty("user.dir") + pack.getImage();
-        imagePath = imagePath.replace("\\", "/");
-        pack.setImage(imagePath);
-        System.out.println(pack.getImage());
         return new ResponseEntity<>(pack, HttpStatus.OK);
     }
 
@@ -114,7 +125,6 @@ public class PackageController {
         packages.forEach(pack -> {
             String imagePath = System.getProperty("user.dir") + pack.getImage();
             imagePath = imagePath.replace("\\", "/");
-            pack.setImage(imagePath);
         });
         return new ResponseEntity<>(packages, HttpStatus.OK);
     }

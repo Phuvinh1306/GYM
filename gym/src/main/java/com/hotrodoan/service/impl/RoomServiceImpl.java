@@ -41,6 +41,7 @@ public class RoomServiceImpl implements RoomService {
         return roomRepository.findById(id).map(po -> {
             po.setName(room.getName());
             po.setImage(room.getImage());
+            po.setDescription(room.getDescription());
 
 //            Set<Equipment> equipments = new HashSet<>(room.getEquipment());
 //            po.setEquipment(equipments);
@@ -66,6 +67,7 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomRepository.findById(roomId).orElseThrow(() -> new RoomNotFoundException("Không tìm thấy phòng tập"));
         List<Room_Equipment> roomEquipments = room_equipmentService.getRoom_EquipmentByRoom(room);
         Equipment_RoomDTO equipmentRoomDTO = new Equipment_RoomDTO();
+        equipmentRoomDTO.setDescription(room.getDescription());
         equipmentRoomDTO.setName(room.getName());
         List<Equipment_Amount> equipmentAmounts = new ArrayList<>();
         for (Room_Equipment roomEquipment : roomEquipments) {

@@ -4,6 +4,7 @@ import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.Equipment;
 import com.hotrodoan.model.GymBranch;
 import com.hotrodoan.model.Room;
+import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GymBranch_RoomDTO {
+    @Lob
+    private String description;
     private String branchGymName;
     private String address;
     private Employee manager;

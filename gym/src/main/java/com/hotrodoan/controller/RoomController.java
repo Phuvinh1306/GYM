@@ -54,6 +54,7 @@ public class RoomController {
         ObjectMapper objectMapper = new ObjectMapper();
         Equipment_RoomDTO equipmentRoomDTO = objectMapper.readValue(equipment_RoomDTO, Equipment_RoomDTO.class);
         Room room = new Room();
+        room.setDescription(equipmentRoomDTO.getDescription());
         room.setName(equipmentRoomDTO.getName());
         if (file != null){
             Image image = imageService.saveImage(file);
@@ -96,6 +97,7 @@ public class RoomController {
         Equipment_RoomDTO equipmentRoomDTO = objectMapper.readValue(equipment_RoomDTO, Equipment_RoomDTO.class);
         Equipment_RoomDTO oldEquipment_RoomDTO = roomService.getByRoom(id);
         Room room = roomService.getRoom(id);
+        room.setDescription(equipmentRoomDTO.getDescription());
         room.setName(equipmentRoomDTO.getName());
         if (file != null && !file.isEmpty()){
             String oldImageId = null;
