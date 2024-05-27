@@ -21,4 +21,5 @@ public interface Member_PackageService {
     Member_Package createMember_PackageBySub(Member_PackageSub memberPackageSub);
     boolean checkExistsByMember(Member member);
     List<Member_Package> getTheExpriredMember_Package(Date today);
+    List<Member_Package> getMember_PackageByMember(Member member);
 }

@@ -17,4 +17,5 @@ public interface Member_PackageRepository extends JpaRepository<Member_Package, 
     Page<Member_Package> findByMember(Member member, Pageable pageable);
     boolean existsByMember(Member member);
     List<Member_Package> findByEndDateBefore(Date today);
+    List<Member_Package> findByMember(Member member);
 }

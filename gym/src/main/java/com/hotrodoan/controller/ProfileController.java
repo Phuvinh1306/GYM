@@ -3,16 +3,12 @@ package com.hotrodoan.controller;
 import com.hotrodoan.dto.request.ChangePasswordForm;
 import com.hotrodoan.dto.request.UpdateProfileForm;
 import com.hotrodoan.dto.response.ResponseMessage;
-import com.hotrodoan.model.GymBranch;
-import com.hotrodoan.model.Image;
-import com.hotrodoan.model.Member;
-import com.hotrodoan.model.User;
+import com.hotrodoan.dto.response.ResponseProfile;
+import com.hotrodoan.model.*;
+import com.hotrodoan.model.Package;
 import com.hotrodoan.security.jwt.JwtProvider;
 import com.hotrodoan.security.jwt.JwtTokenFilter;
-import com.hotrodoan.service.ImageService;
-import com.hotrodoan.service.MemberService;
-import com.hotrodoan.service.ProfileService;
-import com.hotrodoan.service.UserService;
+import com.hotrodoan.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -25,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -52,25 +50,30 @@ public class ProfileController {
     @Autowired
     private MemberService memberService;
 
+    @Autowired
+    private Member_PackageService member_packageService;
+
     @GetMapping("")
-//    public ResponseEntity<?> getProfile(HttpServletRequest request) {
-//        String jwt = jwtTokenFilter.getJwt(request);
-//        String username = jwtProvider.getUsernameFromToken(jwt);
-//        User user = userService.findByUsername(username).orElseThrow();
-//        return new ResponseEntity<>(user, HttpStatus.OK);
-//    }
-    public ResponseEntity<UpdateProfileForm> getProfile(HttpServletRequest request) {
+    public ResponseEntity<ResponseProfile> getProfile(HttpServletRequest request) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
         Member member = memberService.getMemberByUser(user);
-        UpdateProfileForm updateProfileForm = new UpdateProfileForm();
-        updateProfileForm.setName(user.getName());
-        updateProfileForm.setPhone(member.getPhone());
-        updateProfileForm.setCccd(member.getCccd());
-        updateProfileForm.setSex(member.getSex());
-        updateProfileForm.setCreatedAt(member.getCreatedAt());
-        return new ResponseEntity<>(updateProfileForm, HttpStatus.OK);
+
+        ResponseProfile responseProfile = new ResponseProfile();
+        responseProfile.setName(user.getName());
+        responseProfile.setPhone(member.getPhone());
+        responseProfile.setCccd(member.getCccd());
+        responseProfile.setSex(member.getSex());
+        responseProfile.setCreatedAt(member.getCreatedAt());
+        responseProfile.setGymBranch(member.getGymBranch());
+        List<Member_Package> member_packages = member_packageService.getMember_PackageByMember(member);
+        List<Package> packs = new ArrayList<>();
+        for (Member_Package member_package : member_packages) {
+            packs.add(member_package.getPack());
+        }
+        responseProfile.setPacks(packs);
+        return new ResponseEntity<>(responseProfile, HttpStatus.OK);
     }
 
     @GetMapping("/avatar")

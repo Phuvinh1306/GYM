@@ -123,4 +123,9 @@ public class Member_PackageServiceImpl implements Member_PackageService {
     public List<Member_Package> getTheExpriredMember_Package(Date today) {
         return member_packageRepository.findByEndDateBefore(today);
     }
+
+    @Override
+    public List<Member_Package> getMember_PackageByMember(Member member) {
+        return member_packageRepository.findByMember(member);
+    }
 }
