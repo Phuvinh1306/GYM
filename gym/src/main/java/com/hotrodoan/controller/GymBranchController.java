@@ -232,6 +232,8 @@ public class GymBranchController {
         gymBranch_RoomDTO.setBranchGymName(gymBranch.getName());
         gymBranch_RoomDTO.setAddress(gymBranch.getAddress());
         gymBranch_RoomDTO.setManager(gymBranch.getManager());
+        int totalMember = memberService.countMemberByGymBranch(gymBranch);
+        gymBranch_RoomDTO.setTotalMember(totalMember);
 
         List<GymBranch_Room> gymBranchRooms = gymBranchRoomService.getGymBranchesByGymBranch(gymBranch);
         List<Room_Amount> roomAmounts = new ArrayList<>();
