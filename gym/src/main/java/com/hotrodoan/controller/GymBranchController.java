@@ -112,9 +112,18 @@ public class GymBranchController {
         ObjectMapper objectMapper = new ObjectMapper();
         GymBranch_RoomDTO gymBranchRoomDTO = objectMapper.readValue(gymBranch_RoomDTO, GymBranch_RoomDTO.class);
         List<Room_Amount> theSameRoomOnRoomAmounts = new ArrayList<>();
-        if (!gymBranchService.getGymBranchById(id).getManager().equals(gymBranchRoomDTO.getManager()) && gymBranchService.existsByManager(gymBranchRoomDTO.getManager())) {
-            throw new RuntimeException("Manager is duplicated!");
+        GymBranch gymBranch = gymBranchService.getGymBranchById(id);
+        if (gymBranch.getManager().getId() == gymBranchRoomDTO.getManager().getId()){
+            gymBranch.setManager(gymBranchRoomDTO.getManager());
+        }else {
+            if (gymBranchService.existsByManager(gymBranchRoomDTO.getManager())) {
+                throw new RuntimeException("Manager is duplicated!");
+            }
+            else {
+                gymBranch.setManager(gymBranchRoomDTO.getManager());
+            }
         }
+
         for (int i = 0; i < gymBranchRoomDTO.getRoomAndAmounts().size()-1; i++) {
             if (gymBranchRoomDTO.getRoomAndAmounts().get(i).getRoom().getId() == gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getRoom().getId()) {
                 gymBranchRoomDTO.getRoomAndAmounts().get(i).setAmount(gymBranchRoomDTO.getRoomAndAmounts().get(i).getAmount() + gymBranchRoomDTO.getRoomAndAmounts().get(i+1).getAmount());
@@ -125,14 +134,9 @@ public class GymBranchController {
             throw new RuntimeException("Room is duplicated!");
         }
         else {
-            GymBranch gymBranch = gymBranchService.getGymBranchById(id);
             gymBranch.setName(gymBranchRoomDTO.getBranchGymName());
             gymBranch.setAddress(gymBranchRoomDTO.getAddress());
-
-            if (!gymBranch.getManager().equals(gymBranchRoomDTO.getManager())) {
-                gymBranch.setManager(gymBranchRoomDTO.getManager());
-            }
-
+            GymBranch updateGymBranch = gymBranchService.updateGymBranch(gymBranch, id);
             if (file != null && !file.isEmpty()) {
                 String oldImageId = null;
                 Image image = imageService.saveImage(file);
@@ -141,7 +145,7 @@ public class GymBranchController {
                     oldImageId = gymBranch.getImage().getId();
                 }
                 gymBranch.setImage(image);
-                GymBranch updateGymBranch = gymBranchService.updateGymBranch(gymBranch, id);
+                GymBranch updateGymBranch1 = gymBranchService.updateGymBranch(gymBranch, id);
                 if (oldImageId != null) {
                     imageService.deleteImage(oldImageId);
                 }
