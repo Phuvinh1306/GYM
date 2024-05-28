@@ -52,6 +52,7 @@ public class MemberServiceImpl implements MemberService {
             mb.setSex(member.getSex());
             mb.setUser(member.getUser());
             mb.setGymBranch(member.getGymBranch());
+            mb.setAddress(member.getAddress());
 //            Set<Package> packages = new HashSet<>(member.getPackages());
 //            mb.setPackages(packages);
             return memberRepository.save(mb);
