@@ -94,6 +94,7 @@ public class ProfileController {
                                            @RequestParam(value = "name", required = false) String name,
                                            @RequestParam(value = "phone", required = false) String phone,
                                            @RequestParam(value = "cccd", required = false) String cccd,
+                                           @RequestParam(value = "address", required = false) String address,
                                            @RequestParam(value = "sex", required = false) String sex,
                                            @RequestParam(value = "gymBranch", required = false) GymBranch gymBranch,
                                            @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
@@ -104,6 +105,7 @@ public class ProfileController {
         Member member = profileService.getProfileMember(user);
         user.setName(name);
         member.setPhone(phone);
+        member.setAddress(address);
         member.setCccd(cccd);
         member.setSex(sex);
         member.setGymBranch(gymBranch);
