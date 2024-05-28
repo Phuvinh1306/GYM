@@ -64,6 +64,7 @@ public class ProfileController {
         responseProfile.setName(user.getName());
         responseProfile.setUsername(user.getUsername());
         responseProfile.setPhone(member.getPhone());
+        responseProfile.setAddress(member.getAddress());
         responseProfile.setEmail(user.getEmail());
         responseProfile.setCccd(member.getCccd());
         responseProfile.setSex(member.getSex());
