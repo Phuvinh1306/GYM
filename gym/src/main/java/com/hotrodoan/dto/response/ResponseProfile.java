@@ -14,6 +14,7 @@ import java.util.List;
 public class ResponseProfile {
     private String name;
     private String phone;
+    private String email;
     private String address;
     private String cccd;
     private String sex;

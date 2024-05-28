@@ -63,6 +63,7 @@ public class ProfileController {
         ResponseProfile responseProfile = new ResponseProfile();
         responseProfile.setName(user.getName());
         responseProfile.setPhone(member.getPhone());
+        responseProfile.setEmail(user.getEmail());
         responseProfile.setCccd(member.getCccd());
         responseProfile.setSex(member.getSex());
         responseProfile.setCreatedAt(member.getCreatedAt());
