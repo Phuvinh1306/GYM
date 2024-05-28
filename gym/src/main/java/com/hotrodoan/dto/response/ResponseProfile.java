@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ResponseProfile {
     private String name;
+    private String username;
     private String phone;
     private String email;
     private String address;
