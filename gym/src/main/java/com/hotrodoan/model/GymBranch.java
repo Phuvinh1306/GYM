@@ -26,6 +26,9 @@ public class GymBranch {
     @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "gymBranch")
     @JsonIgnore
     private List<Member> members;
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER, mappedBy = "gymBranch")
+    @JsonIgnore
+    private List<GymBranch_Room> gymBranch_rooms;
     @Column(nullable = true)
     private int totalMember=0;
     @OneToOne
