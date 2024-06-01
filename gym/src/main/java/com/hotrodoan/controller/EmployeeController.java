@@ -2,10 +2,7 @@ package com.hotrodoan.controller;
 
 import com.hotrodoan.dto.request.EmployeeDTO;
 import com.hotrodoan.dto.response.ResponseMessage;
-import com.hotrodoan.model.Employee;
-import com.hotrodoan.model.Role;
-import com.hotrodoan.model.RoleName;
-import com.hotrodoan.model.User;
+import com.hotrodoan.model.*;
 import com.hotrodoan.service.EmployeeService;
 import com.hotrodoan.service.RoleService;
 import com.hotrodoan.service.UserService;
@@ -18,8 +15,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,69 +46,43 @@ public class EmployeeController {
 //    }
 
     @PostMapping("/admin/add")
-    public ResponseEntity<EmployeeDTO> addEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        User user = new User();
-        user.setName(employeeDTO.getName());
-        user.setUsername(employeeDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(employeeDTO.getPassword()));
-        user.setEmail(employeeDTO.getEmail());
-        Set<Role> roles = new HashSet<>();
+    public ResponseEntity<Employee> addEmployee(@RequestParam String name,
+                                                   @RequestParam String username,
+                                                   @RequestParam String password,
+                                                   @RequestParam String email,
+                                                   @RequestParam String dob,
+                                                   @RequestParam String cccd,
+                                                   @RequestParam String phone,
+                                                   @RequestParam String address,
+                                                   @RequestParam String startWork,
+                                                   @RequestParam String sex,
+                                                   @RequestParam Position  position,
+                                                   @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
 
-        Employee employee = new Employee();
-        employee.setName(employeeDTO.getFullName());
-        employee.setDob(employeeDTO.getDob());
-        employee.setCccd(employeeDTO.getCccd());
-        employee.setPhone(employeeDTO.getPhone());
-        employee.setAddress(employeeDTO.getAddress());
-        employee.setStartWork(employeeDTO.getStartWork());
-        employee.setSex(employeeDTO.getSex());
-        employee.setPosition(employeeDTO.getPosition());
-        employee.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-
-        if (employeeDTO.getPosition().getId() == 3){
-            Role managerRole = roleService.findByName(RoleName.MANAGER).orElseThrow(() -> new RuntimeException("Role not found"));
-            roles.add(managerRole);
-        }
-        else {
-            Role pmRole = roleService.findByName(RoleName.EMPLOYEE).orElseThrow(() -> new RuntimeException("Role not found"));
-            roles.add(pmRole);
-        }
-
-        user.setRoles(roles);
-        User newUser = userService.save(user);
-        employee.setUser(newUser);
-        Employee newEmployee = employeeService.addEmployee(employee);
-        return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
+        Employee newEmployee = employeeService.addEmployee(name, username, password, email, dob, cccd, phone, address,
+                startWork, sex, position, file);
+        return new ResponseEntity<>(newEmployee, HttpStatus.OK);
     }
 
     @PutMapping("/admin/update/{id}")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@RequestBody EmployeeDTO employeeDTO, @PathVariable Long id){
-        Employee employee = employeeService.getEmployee(id);
-        User user = employee.getUser();
-        user.setName(employeeDTO.getName());
-        Set<Role> roles = new HashSet<>();
-
-        employee.setName(employeeDTO.getFullName());
-        employee.setDob(employeeDTO.getDob());
-        employee.setPhone(employeeDTO.getPhone());
-        employee.setAddress(employeeDTO.getAddress());
-        if (employeeDTO.getPosition().getId() == 3){
-            Role managerRole = roleService.findByName(RoleName.MANAGER).orElseThrow(() -> new RuntimeException("Role not found"));
-            roles.add(managerRole);
-        }
-        else {
-            Role pmRole = roleService.findByName(RoleName.EMPLOYEE).orElseThrow(() -> new RuntimeException("Role not found"));
-            roles.add(pmRole);
-        }
-
-        user.setRoles(roles);
-        User updatedUser = userService.save(user);
-        employee.setUser(updatedUser);
-        employeeService.updateEmployee(employee, id);
-        return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
+    public ResponseEntity<Employee> updateEmployee(@RequestParam String name,
+                                                      @RequestParam String username,
+                                                      @RequestParam String email,
+                                                      @RequestParam String dob,
+                                                      @RequestParam String cccd,
+                                                      @RequestParam String phone,
+                                                      @RequestParam String address,
+                                                      @RequestParam String startWork,
+                                                      @RequestParam String sex,
+                                                      @RequestParam Position position,
+                                                      @RequestParam(value = "file", required = false) MultipartFile file,
+                                                      @PathVariable Long id) throws Exception{
+        Employee employee = employeeService.updateEmployee(name, username, email, dob, cccd, phone,
+                address, startWork, sex, position, file, id);
+        return new ResponseEntity<>(employee, HttpStatus.OK);
     }
 
-    @DeleteMapping("/admin/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable("id") Long id) {
         employeeService.deleteEmployee(id);
         return new ResponseEntity<>(new ResponseMessage("deleted"), HttpStatus.OK);
@@ -119,10 +92,9 @@ public class EmployeeController {
     public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable("id") Long id) {
         Employee employee = employeeService.getEmployee(id);
         EmployeeDTO employeeDTO = new EmployeeDTO();
-        employeeDTO.setName(employee.getUser().getName());
         employeeDTO.setUsername(employee.getUser().getUsername());
         employeeDTO.setEmail(employee.getUser().getEmail());
-        employeeDTO.setFullName(employee.getName());
+        employeeDTO.setName(employee.getName());
         employeeDTO.setDob(employee.getDob());
         employeeDTO.setCccd(employee.getCccd());
         employeeDTO.setPhone(employee.getPhone());
@@ -143,6 +115,12 @@ public class EmployeeController {
                                                                        @RequestParam(defaultValue = "desc") String order) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
         Page<Employee> employees = employeeService.getByEmployeesByPositionNameContaining(positionName, pageable);
+        return new ResponseEntity<>(employees, HttpStatus.OK);
+    }
+
+    @GetMapping("/admin/manager-available")
+    public ResponseEntity<List<Employee>> getManagerAvailable() {
+        List<Employee> employees = employeeService.getManagerAvailable();
         return new ResponseEntity<>(employees, HttpStatus.OK);
     }
 }

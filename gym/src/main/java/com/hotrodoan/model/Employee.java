@@ -42,10 +42,9 @@ public class Employee {
     private Date startWork;
 
     private String sex;
-
-    @Lob
-    private String avatar = "https://firebasestorage.googleapis.com/v0/b/lvkmusic.appspot.com/o/umgu5ofe2y?alt=media&token=d9756614-c86c-4269-b46e-8d4b8b2f02d3";
-
+    @OneToOne
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image avatar;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
