@@ -49,4 +49,9 @@ public class Room_EquipmentServiceImpl implements Room_EquipmentService {
     public List<Room_Equipment> getRoom_EquipmentByRoom(Room room) {
         return room_EquipmentRepository.findByRoom(room);
     }
+
+    @Override
+    public Integer countUsedEachEquipment(Equipment equipment) {
+        return room_EquipmentRepository.countUsedEachEquipment(equipment);
+    }
 }

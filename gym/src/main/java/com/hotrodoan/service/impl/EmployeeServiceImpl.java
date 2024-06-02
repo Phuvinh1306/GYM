@@ -1,5 +1,6 @@
 package com.hotrodoan.service.impl;
 
+import com.hotrodoan.dto.request.EmployeeDTO;
 import com.hotrodoan.exception.EmployeeNotfoundException;
 import com.hotrodoan.model.*;
 import com.hotrodoan.repository.EmployeeRepository;
@@ -89,8 +90,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 //    }
 
     @Override
-    public Employee getEmployee(Long id) {
-        return employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotfoundException("Không tìm thấy nhân viên"));
+    public EmployeeDTO getEmployee(Long id) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotfoundException("Không tìm thấy nhân viên"));
+        User user = employee.getUser();
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        employeeDTO.setName(employee.getName());
+        employeeDTO.setUsername(user.getUsername());
+        employeeDTO.setEmail(user.getEmail());
+        employeeDTO.setDob(employee.getDob());
+        employeeDTO.setCccd(employee.getCccd());
+        employeeDTO.setPhone(employee.getPhone());
+        employeeDTO.setAddress(employee.getAddress());
+        employeeDTO.setStartWork(employee.getStartWork());
+        employeeDTO.setSex(employee.getSex());
+        employeeDTO.setPosition(employee.getPosition());
+        employeeDTO.setImage(employee.getAvatar());
+        return employeeDTO;
     }
 
     @Override

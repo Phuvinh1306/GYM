@@ -1,5 +1,6 @@
 package com.hotrodoan.service;
 
+import com.hotrodoan.dto.request.EmployeeDTO;
 import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.Position;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,7 @@ public interface EmployeeService {
     Employee addEmployee(String name, String username, String passord, String email, String dob, String cccd,
                          String phone, String address, String startWork, String sex, Position position, MultipartFile file) throws Exception;
 //    List<Employee> getAllEmployee();
-    Employee getEmployee(Long id);
+EmployeeDTO getEmployee(Long id);
     void deleteEmployee(Long id);
     Employee updateEmployee(String name, String username, String email, String dob, String cccd,
                             String phone, String address, String startWork, String sex, Position position,

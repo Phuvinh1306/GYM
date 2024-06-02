@@ -25,8 +25,8 @@ public class Equipment {
     private String name;
 
     @Min(0)
-    @Max(50)
-    private int quantity=50;
+    private int quantity=0;
+    private int usedQuantity=0;
     private double price;
     private String madein = "Việt Nam";
 

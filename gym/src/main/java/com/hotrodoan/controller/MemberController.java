@@ -1,5 +1,6 @@
 package com.hotrodoan.controller;
 
+import com.hotrodoan.dto.request.MemberDTO;
 import com.hotrodoan.dto.response.ResponseMessage;
 import com.hotrodoan.model.Employee;
 import com.hotrodoan.model.Member;
@@ -46,8 +47,8 @@ public class MemberController {
 //    }
 
     @PostMapping("/admin/add")
-    public ResponseEntity<Member> addMember(@RequestBody Member member) {
-        return new ResponseEntity<>(memberService.addMember(member), HttpStatus.OK);
+    public ResponseEntity<Member> addMember(@RequestBody MemberDTO memberDTO) {
+        return new ResponseEntity<>(memberService.addMember(memberDTO), HttpStatus.OK);
     }
 
 //    @PostMapping("/add")
@@ -59,9 +60,9 @@ public class MemberController {
 //        return new ResponseEntity<>(memberService.addMember(member), HttpStatus.OK);
 //    }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Member> updateMember(@RequestBody Member member, @PathVariable Long id){
-        return new ResponseEntity<>(memberService.updateMember(member, id), HttpStatus.OK);
+    @PutMapping("/admin/update/{id}")
+    public ResponseEntity<Member> updateMember(@RequestBody MemberDTO memberDTO, @PathVariable Long id){
+        return new ResponseEntity<>(memberService.updateMember(memberDTO, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
@@ -71,8 +72,8 @@ public class MemberController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Member> getMember(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(memberService.getMember(id), HttpStatus.OK);
+    public ResponseEntity<MemberDTO> getMember(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(memberService.getMemberDTO(id), HttpStatus.OK);
     }
 
     @GetMapping("")

@@ -90,21 +90,7 @@ public class EmployeeController {
 
     @GetMapping("/admin/{id}")
     public ResponseEntity<EmployeeDTO> getEmployee(@PathVariable("id") Long id) {
-        Employee employee = employeeService.getEmployee(id);
-        EmployeeDTO employeeDTO = new EmployeeDTO();
-        employeeDTO.setUsername(employee.getUser().getUsername());
-        employeeDTO.setEmail(employee.getUser().getEmail());
-        employeeDTO.setName(employee.getName());
-        employeeDTO.setDob(employee.getDob());
-        employeeDTO.setCccd(employee.getCccd());
-        employeeDTO.setPhone(employee.getPhone());
-        employeeDTO.setAddress(employee.getAddress());
-        employeeDTO.setStartWork(employee.getStartWork());
-        employeeDTO.setSex(employee.getSex());
-        employeeDTO.setPosition(employee.getPosition());
-        Set<String> roles = new HashSet<>();
-        roles.add(employee.getUser().getRoles().toString());
-        return new ResponseEntity<>(employeeDTO, HttpStatus.OK);
+        return new ResponseEntity<>(employeeService.getEmployee(id), HttpStatus.OK);
     }
 
     @GetMapping("")

@@ -7,6 +7,7 @@ import com.hotrodoan.dto.request.GymBranch_RoomDTO;
 import com.hotrodoan.dto.request.Room_Amount;
 import com.hotrodoan.dto.response.ResponseMessage;
 import com.hotrodoan.model.*;
+import com.hotrodoan.service.EquipmentService;
 import com.hotrodoan.service.ImageService;
 import com.hotrodoan.service.RoomService;
 import com.hotrodoan.service.Room_EquipmentService;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/rooms")
@@ -37,6 +39,8 @@ public class RoomController {
     private Room_EquipmentService room_equipmentService;
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private EquipmentService equipmentService;
 
     @GetMapping("")
     public ResponseEntity<Page<Room>> getAllRoom(@RequestParam(defaultValue = "") String name,
@@ -63,12 +67,22 @@ public class RoomController {
         Room newRoom = roomService.addRoom(room);
         List<Equipment_Amount> equipmentAmounts = equipmentRoomDTO.getEquipmentAmounts();
         for (Equipment_Amount equipmentAmount : equipmentAmounts) {
-            Equipment equipment = equipmentAmount.getEquipment();
-
+            Long equipmentId = equipmentAmount.getEquipment().getId();
+            Equipment equipment = equipmentService.getEquipment(equipmentId);
+            int quantity = equipment.getQuantity();
+            int amount = equipmentAmount.getAmount();
+            Integer usedEquipment = room_equipmentService.countUsedEachEquipment(equipment);
             Room_Equipment roomEquipment = new Room_Equipment();
             roomEquipment.setRoom(newRoom);
             roomEquipment.setEquipment(equipment);
-            roomEquipment.setQuantity(equipmentAmount.getAmount());
+
+            if (amount > (quantity - usedEquipment)) {
+                roomEquipment.setQuantity(quantity - usedEquipment);
+            } else if (quantity - usedEquipment <= 0) {
+                roomEquipment.setQuantity(0);
+            } else if (amount <= (quantity - usedEquipment)){
+                roomEquipment.setQuantity(amount);
+            }
             room_equipmentService.createRoom_Equipment(roomEquipment);
         }
         return new ResponseEntity<>(equipmentRoomDTO, HttpStatus.OK);
@@ -121,21 +135,47 @@ public class RoomController {
                 Equipment_Amount newEquipmentAmount = newEquipmentAmounts.get(i);
 
                 Room_Equipment roomEquipment = room_equipmentService.getRoom_EquipmentByRoomAndEquipment(updatedRoom, oldEquipmentAmount.getEquipment());
+                Integer usedEqiupment = room_equipmentService.countUsedEachEquipment(oldEquipmentAmount.getEquipment());
+                Integer usedEquipmentAfterMinus = usedEqiupment - oldEquipmentAmount.getAmount();
+                Long equipmentId = newEquipmentAmount.getEquipment().getId();
+                Equipment equipment = equipmentService.getEquipment(equipmentId);
+                int quantity = equipment.getQuantity();
+                int amount = newEquipmentAmount.getAmount();
+                roomEquipment.setRoom(updatedRoom);
+                roomEquipment.setEquipment(equipment);
+
+                if (amount > (quantity - usedEquipmentAfterMinus)) {
+                    roomEquipment.setQuantity(quantity - usedEquipmentAfterMinus);
+                } else if (quantity - usedEquipmentAfterMinus <= 0) {
+                    roomEquipment.setQuantity(0);
+                } else if (amount <= (quantity - usedEquipmentAfterMinus)){
+                    roomEquipment.setQuantity(amount);
+                }
 
                 roomEquipment.setRoom(updatedRoom);
                 roomEquipment.setEquipment(newEquipmentAmount.getEquipment());
-                roomEquipment.setQuantity(newEquipmentAmount.getAmount());
                 room_equipmentService.updateRoom_Equipment(roomEquipment, roomEquipment.getId());
             }
 
             for (int i = oldEquipmentAmounts.size(); i < newEquipmentAmounts.size(); i++) {
                 Room newRoom = roomService.getRoom(id);
-                Equipment newEquipment = newEquipmentAmounts.get(i).getEquipment();
-                int quantity = newEquipmentAmounts.get(i).getAmount();
+
+                Long equipmentId = newEquipmentAmounts.get(i).getEquipment().getId();
+                Equipment equipment = equipmentService.getEquipment(equipmentId);
+                int quantity = equipment.getQuantity();
+                int amount = newEquipmentAmounts.get(i).getAmount();
+                Integer usedEquipment = room_equipmentService.countUsedEachEquipment(equipment);
                 Room_Equipment roomEquipment = new Room_Equipment();
                 roomEquipment.setRoom(newRoom);
-                roomEquipment.setEquipment(newEquipment);
-                roomEquipment.setQuantity(quantity);
+                roomEquipment.setEquipment(equipment);
+
+                if (amount > (quantity - usedEquipment)) {
+                    roomEquipment.setQuantity(quantity - usedEquipment);
+                } else if (quantity - usedEquipment <= 0) {
+                    roomEquipment.setQuantity(0);
+                } else if (amount <= (quantity - usedEquipment)){
+                    roomEquipment.setQuantity(amount);
+                }
                 room_equipmentService.createRoom_Equipment(roomEquipment);
             }
         } else if (newEquipmentAmounts.size() == oldEquipmentAmounts.size()) {
@@ -144,10 +184,22 @@ public class RoomController {
                 Equipment_Amount newEquipmentAmount = newEquipmentAmounts.get(i);
 
                 Room_Equipment roomEquipment = room_equipmentService.getRoom_EquipmentByRoomAndEquipment(updatedRoom, oldEquipmentAmount.getEquipment());
-
+                Integer usedEqiupment = room_equipmentService.countUsedEachEquipment(oldEquipmentAmount.getEquipment());
+                Integer usedEquipmentAfterMinus = usedEqiupment - oldEquipmentAmount.getAmount();
+                Long equipmentId = newEquipmentAmount.getEquipment().getId();
+                Equipment equipment = equipmentService.getEquipment(equipmentId);
+                int quantity = equipment.getQuantity();
+                int amount = newEquipmentAmount.getAmount();
                 roomEquipment.setRoom(updatedRoom);
-                roomEquipment.setEquipment(newEquipmentAmount.getEquipment());
-                roomEquipment.setQuantity(newEquipmentAmount.getAmount());
+                roomEquipment.setEquipment(equipment);
+
+                if (amount > (quantity - usedEquipmentAfterMinus)) {
+                    roomEquipment.setQuantity(quantity - usedEquipmentAfterMinus);
+                } else if (quantity - usedEquipmentAfterMinus <= 0) {
+                    roomEquipment.setQuantity(0);
+                } else if (amount <= (quantity - usedEquipmentAfterMinus)){
+                    roomEquipment.setQuantity(amount);
+                }
                 room_equipmentService.updateRoom_Equipment(roomEquipment, roomEquipment.getId());
             }
         } else {
@@ -157,9 +209,23 @@ public class RoomController {
 
                 Room_Equipment roomEquipment = room_equipmentService.getRoom_EquipmentByRoomAndEquipment(updatedRoom, oldEquipmentAmount.getEquipment());
 
+                Integer usedEqiupment = room_equipmentService.countUsedEachEquipment(oldEquipmentAmount.getEquipment());
+                Integer usedEquipmentAfterMinus = usedEqiupment - oldEquipmentAmount.getAmount();
+                Long equipmentId = newEquipmentAmount.getEquipment().getId();
+                Equipment equipment = equipmentService.getEquipment(equipmentId);
+                int quantity = equipment.getQuantity();
+                int amount = newEquipmentAmount.getAmount();
                 roomEquipment.setRoom(updatedRoom);
-                roomEquipment.setEquipment(newEquipmentAmount.getEquipment());
-                roomEquipment.setQuantity(newEquipmentAmount.getAmount());
+                roomEquipment.setEquipment(equipment);
+
+                if (amount > (quantity - usedEquipmentAfterMinus)) {
+                    roomEquipment.setQuantity(quantity - usedEquipmentAfterMinus);
+                } else if (quantity - usedEquipmentAfterMinus <= 0) {
+                    roomEquipment.setQuantity(0);
+                } else if (amount <= (quantity - usedEquipmentAfterMinus)){
+                    roomEquipment.setQuantity(amount);
+                }
+
                 room_equipmentService.updateRoom_Equipment(roomEquipment, roomEquipment.getId());
             }
 

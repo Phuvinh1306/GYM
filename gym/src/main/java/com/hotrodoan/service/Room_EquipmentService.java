@@ -13,4 +13,5 @@ public interface Room_EquipmentService {
     void deleteRoom_Equipment(Long id);
     Room_Equipment getRoom_EquipmentByRoomAndEquipment(Room room, Equipment equipment);
     List<Room_Equipment> getRoom_EquipmentByRoom(Room room);
+    Integer countUsedEachEquipment(Equipment equipment);
 }

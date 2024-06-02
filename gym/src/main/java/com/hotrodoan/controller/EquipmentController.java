@@ -36,47 +36,17 @@ public class EquipmentController {
     @Autowired
     private ImageService imageService;
 
-//    @GetMapping("")
-//    public ResponseEntity<Page<Equipment>> getAllEquipment(@RequestParam(defaultValue = "0") int page,
-//                                                           @RequestParam(defaultValue = "10") int size,
-//                                                           @RequestParam(defaultValue = "id") String sortBy,
-//                                                           @RequestParam(defaultValue = "desc") String order) {
-//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc(sortBy)));
-//        return new ResponseEntity<>(equipmentService.getAllEquipment(pageable), HttpStatus.OK);
-//    }
-
-//    @PostMapping("/add")
-//    public ResponseEntity<Room_EquipmentDTO> addEquipment(@RequestBody Room_EquipmentDTO roomEquipmentDTO) {
-//        Equipment equipment = new Equipment();
-//        equipment.setName(roomEquipmentDTO.getName());
-//        equipment.setPrice(roomEquipmentDTO.getPrice());
-//        equipment.setMadein(roomEquipmentDTO.getMadein());
-//        equipment.setImage(roomEquipmentDTO.getImage());
-//        equipment.setEquipType(roomEquipmentDTO.getEquipType());
-//        Equipment newEquipment = equipmentService.addEquipment(equipment);
-//
-//        List<Room_Amount> roomAmounts = roomEquipmentDTO.getRoomAmounts();
-//
-//        for (Room_Amount roomAmount : roomAmounts) {
-//            Room_Equipment roomEquipment = new Room_Equipment();
-//            roomEquipment.setEquipment(newEquipment);
-//            roomEquipment.setRoom(roomAmount.getRoom());
-//            roomEquipment.setEquipment(newEquipment);
-//            roomEquipment.setQuantity(roomAmount.getAmount());
-//            room_EquipmentService.createRoom_Equipment(roomEquipment);
-//        }
-//        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
-//    }
-
     @PostMapping(value = "/admin/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Equipment> addEquipment(@RequestParam("name") String name,
                                                  @RequestParam("price") double price,
+                                                 @RequestParam("quantity") int quantity,
                                                  @RequestParam("madein") String madein,
                                                  @RequestParam(value = "file", required = false) MultipartFile file,
                                                  @RequestParam EquipType equipType) throws Exception{
         Equipment equipment = new Equipment();
         equipment.setName(name);
         equipment.setPrice(price);
+        equipment.setQuantity(quantity);
         equipment.setMadein(madein);
         equipment.setEquipType(equipType);
 
@@ -87,26 +57,10 @@ public class EquipmentController {
         return new ResponseEntity<>(equipmentService.addEquipment(equipment), HttpStatus.OK);
     }
 
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<Room_EquipmentDTO> updateEquipment(@RequestBody Room_EquipmentDTO roomEquipmentDTO, @PathVariable Long id) {
-//        Equipment equipment = equipmentService.getEquipment(id);
-////        Room_Equipment roomEquipment = room_EquipmentService.getRoom_EquipmentByRoomAndEquipment(room, equipment);
-//        equipment.setName(roomEquipmentDTO.getName());
-//        equipment.setPrice(roomEquipmentDTO.getPrice());
-//        equipment.setMadein(roomEquipmentDTO.getMadein());
-//        equipment.setImage(roomEquipmentDTO.getImage());
-//        equipment.setEquipType(roomEquipmentDTO.getEquipType());
-//        Room room = roomEquipmentDTO.getRoom();
-
-//        roomEquipment.setEquipment(equipment);
-//        roomEquipment.setRoom(room);
-//        roomEquipment.setQuantity(roomEquipmentDTO.getQuantity());
-//        return new ResponseEntity<>(roomEquipmentDTO, HttpStatus.OK);
-//    }
-
     @PutMapping(value = "/admin/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Equipment> updateEquipment(@RequestParam("name") String name,
                                                      @RequestParam("price") double price,
+                                                     @RequestParam("quantity") int quantity,
                                                      @RequestParam("madein") String madein,
                                                      @RequestParam(value = "file", required = false) MultipartFile file,
                                                      @RequestParam EquipType equipType,
@@ -115,6 +69,7 @@ public class EquipmentController {
         String imageId = null;
         equipment.setName(name);
         equipment.setPrice(price);
+        equipment.setQuantity(quantity);
         equipment.setMadein(madein);
         equipment.setEquipType(equipType);
 
@@ -151,7 +106,10 @@ public class EquipmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Equipment> getEquipment(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(equipmentService.getEquipment(id), HttpStatus.OK);
+        Equipment equipment = equipmentService.getEquipment(id);
+        int usedQuantity = room_EquipmentService.countUsedEachEquipment(equipment);
+        equipment.setUsedQuantity(usedQuantity);
+        return new ResponseEntity<>(equipment, HttpStatus.OK);
     }
 
     @GetMapping("")
