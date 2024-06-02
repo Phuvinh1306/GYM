@@ -145,18 +145,21 @@ public class BookingController {
         String username = jwtProvider.getUsernameFromToken(jwt);
         User user = userService.findByUsername(username).orElseThrow();
         boolean isEmployeeBooked = bookingService.existsBookingForEmployeeInTimeRange(booking.getEmployee(), booking.getBookingTime(), booking.getEndTime());
+        Booking findBooking = bookingService.findById(id).orElseThrow(() -> new EmployeeNotfoundException("Không tìm thấy booking"));
+        findBooking.setEmployee(booking.getEmployee());
+        findBooking.setBookingTime(booking.getBookingTime());
+        findBooking.setEndTime(booking.getEndTime());
         if (isEmployeeBooked){
             Member member = memberService.getMemberByUser(user);
-            Booking findBooking = bookingService.findById(id).orElseThrow();
             if (findBooking.getMember().equals(member)){
-                return new ResponseEntity<>(bookingService.updateBooking(booking, id), HttpStatus.OK);
+                return new ResponseEntity<>(bookingService.updateBooking(findBooking, id), HttpStatus.OK);
             }
             else {
                 throw new EmployeeNotfoundException("Nhân viên đã có lịch đặt trong khoảng thời gian này");
             }
         }
         else {
-            return new ResponseEntity<>(bookingService.updateBooking(booking, id), HttpStatus.OK);
+            return new ResponseEntity<>(bookingService.updateBooking(findBooking, id), HttpStatus.OK);
         }
     }
 
