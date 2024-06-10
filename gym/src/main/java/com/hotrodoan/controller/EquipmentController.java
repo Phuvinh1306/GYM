@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -37,6 +38,7 @@ public class EquipmentController {
     private ImageService imageService;
 
     @PostMapping(value = "/admin/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
     public ResponseEntity<Equipment> addEquipment(@RequestParam("name") String name,
                                                  @RequestParam("price") double price,
                                                  @RequestParam("quantity") int quantity,
@@ -58,6 +60,7 @@ public class EquipmentController {
     }
 
     @PutMapping(value = "/admin/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
     public ResponseEntity<Equipment> updateEquipment(@RequestParam("name") String name,
                                                      @RequestParam("price") double price,
                                                      @RequestParam("quantity") int quantity,
@@ -99,6 +102,7 @@ public class EquipmentController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Transactional
     public ResponseEntity<?> deleteEquipment(@PathVariable("id") Long id) {
         equipmentService.deleteEquipment(id);
         return new ResponseEntity<>(new ResponseMessage("deleted"), HttpStatus.OK);

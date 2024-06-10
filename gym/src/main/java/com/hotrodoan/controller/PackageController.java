@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -49,6 +50,7 @@ public class PackageController {
     //     return new ResponseEntity<>(packageService.addPackage(pack), HttpStatus.OK);
     // }
     @PostMapping("/admin/add")
+    @Transactional
     public ResponseEntity<Package> addPackage(@RequestParam(value = "file", required = false) MultipartFile file,
                                               @RequestParam("name") String name,
                                               @RequestParam("price") int price,
@@ -76,6 +78,7 @@ public class PackageController {
     }
 
     @PutMapping("/admin/update/{id}")
+    @Transactional
     public ResponseEntity<Package> updatePackage(@RequestParam(value = "file", required = false) MultipartFile file,
                                                  @RequestParam("name") String name,
                                                  @RequestParam("price") int price,

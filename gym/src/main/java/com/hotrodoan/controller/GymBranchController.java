@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,6 +56,7 @@ public class GymBranchController {
     }
 
     @PostMapping(value = "/admin/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
     public ResponseEntity<GymBranch_RoomDTO> addGymBranch(@RequestParam String gymBranch_RoomDTO,
                                                           @RequestParam(value = "file", required = false) MultipartFile file) throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
@@ -107,6 +109,7 @@ public class GymBranchController {
     }
 
     @PutMapping(value = "/admin/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
     public ResponseEntity<GymBranch_RoomDTO> updateGymBranch(@RequestParam String gymBranch_RoomDTO,
                                                              @RequestParam(value = "file", required = false) MultipartFile file,
                                                              @PathVariable Long id) throws Exception{
@@ -214,6 +217,7 @@ public class GymBranchController {
     }
 
     @DeleteMapping("/admin/delete/{id}")
+    @Transactional
     public ResponseEntity<ResponseMessage> deleteGymBranch(@PathVariable("id") Long id) {
         gymBranchService.deleteGymBranchById(id);
         return new ResponseEntity<>(new ResponseMessage("deleted"), HttpStatus.OK);

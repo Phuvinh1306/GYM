@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -75,6 +76,7 @@ public class Member_PackageController {
     }
 
     @PostMapping("/add")
+    @Transactional
     public ResponseEntity<VNPayResponse> addMember_Package(HttpServletRequest request, @RequestBody Member_PackageSub memberPackageSub) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
@@ -99,6 +101,7 @@ public class Member_PackageController {
     }
 
     @DeleteMapping("admin/delete/{id}")
+    @Transactional
     public ResponseEntity<?> deleteMember_Package(@PathVariable("id") Long id) {
         member_packageService.deleteMember_Package(id);
         return new ResponseEntity<>(HttpStatus.OK);

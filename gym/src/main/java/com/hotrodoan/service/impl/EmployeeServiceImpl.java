@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
@@ -37,6 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public Employee addEmployee(String name, String username, String passord, String email, String dob, String cccd,
                                 String phone, String address, String startWork, String sex, Position position,
                                 MultipartFile file) throws Exception {
@@ -117,6 +119,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public Employee updateEmployee(String name, String username, String email, String dob, String cccd,
                                    String phone, String address, String startWork, String sex, Position position,
                                    MultipartFile file, Long id) throws Exception {

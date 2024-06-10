@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -91,6 +92,7 @@ public class ProfileController {
     }
 
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Transactional
     public ResponseEntity<Member> updateProfile(HttpServletRequest request,
                                            @RequestParam(value = "name", required = false) String name,
                                            @RequestParam(value = "phone", required = false) String phone,
@@ -130,6 +132,7 @@ public class ProfileController {
     }
 
     @PutMapping("/change-password")
+    @Transactional
     public ResponseEntity<?> changePassword(HttpServletRequest request, @RequestBody ChangePasswordForm changePasswordForm) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);
@@ -147,6 +150,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/delete")
+    @Transactional
     public ResponseEntity<?> deleteProfile(HttpServletRequest request) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);

@@ -22,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,6 +54,7 @@ public class RoomController {
     }
 
     @PostMapping("/admin/add")
+    @Transactional
     public ResponseEntity<Equipment_RoomDTO> addRoom(@RequestParam String equipment_RoomDTO,
                                                      @RequestParam(value = "file", required = false) MultipartFile file) throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
@@ -104,6 +106,7 @@ public class RoomController {
     }
 
     @PutMapping("/admin/update/{id}")
+    @Transactional
     public ResponseEntity<Equipment_RoomDTO> updateRoom(@RequestParam String equipment_RoomDTO,
                                                         @RequestParam(value = "file", required = false) MultipartFile file,
                                                         @PathVariable Long id) throws Exception{
@@ -240,6 +243,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Transactional
     public ResponseEntity<?> deleteRoom(@PathVariable("id") Long id) {
         roomService.deleteRoom(id);
         return new ResponseEntity<>(new ResponseMessage("deleted"), HttpStatus.OK);
