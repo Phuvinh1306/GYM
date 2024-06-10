@@ -21,6 +21,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -87,6 +88,7 @@ public class BookingController {
     }
 
     @PostMapping("/add")
+    @Transactional
     public ResponseEntity<VNPayResponse> addBooking(HttpServletRequest request, @RequestBody BookingSub bookingSub) {
         if (employeeService.existsByIdAndPositionId(bookingSub.getEmployee().getId(), 2L)){
             String jwt = jwtTokenFilter.getJwt(request);
@@ -124,6 +126,7 @@ public class BookingController {
     }
 
     @PostMapping("/admin/add")
+    @Transactional
     public ResponseEntity<?> addBooking(@RequestBody Booking booking) {
         if (employeeService.existsByIdAndPositionId(booking.getEmployee().getId(), 2L)){
             return new ResponseEntity<>(bookingService.addBooking(booking), HttpStatus.OK);
@@ -140,6 +143,7 @@ public class BookingController {
     }
 
     @PutMapping("/update/{id}")
+    @Transactional
     public ResponseEntity<?> updateBooking(HttpServletRequest request, @PathVariable Long id, @RequestBody Booking booking) {
         String jwt = jwtTokenFilter.getJwt(request);
         String username = jwtProvider.getUsernameFromToken(jwt);

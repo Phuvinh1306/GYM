@@ -24,7 +24,6 @@ public class Equipment {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Min(0)
     private int quantity=0;
     private int usedQuantity=0;
     private double price;
