@@ -11,6 +11,7 @@ import com.hotrodoan.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private ImageService imageService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Employee addEmployee(Employee employee) {
@@ -45,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         User user = new User();
         user.setName(name);
         user.setUsername(username);
-        user.setPassword(passord);
+        user.setPassword(passwordEncoder.encode(passord));
         user.setEmail(email);
         user.setEnabled(true);
         Set<Role> roles = new HashSet<>();

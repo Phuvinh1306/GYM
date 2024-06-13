@@ -96,16 +96,15 @@ public class BookingController {
             User user = userService.findByUsername(username).orElseThrow();
             Member member = memberService.getMemberByUser(user);
             bookingSub.setMember(member);
-            if (member_packageService.checkExistsByMember(member)) {
-                bookingSub.setCost(0);
-            }
-            else {
-                LocalDate bookingTime = bookingSub.getBookingTime().toLocalDateTime().toLocalDate();
-                LocalDate endTime = bookingSub.getEndTime().toLocalDateTime().toLocalDate();
-                int days = (int) ChronoUnit.DAYS.between(bookingTime, endTime);
-                bookingSub.setCost(80000 * (days+1));
-            }
-
+//            if (member_packageService.checkExistsByMember(member)) {
+//                bookingSub.setCost(0);
+//            }
+//            else {
+            LocalDate bookingTime = bookingSub.getBookingTime().toLocalDateTime().toLocalDate();
+            LocalDate endTime = bookingSub.getEndTime().toLocalDateTime().toLocalDate();
+            int days = (int) ChronoUnit.DAYS.between(bookingTime, endTime);
+            bookingSub.setCost(80000 * (days+1));
+//            }
             BookingSub newBookingSub = bookingSubService.createBookingSub(bookingSub);
 //            WorkoutSession workoutSession = new WorkoutSession();
 //            workoutSession.setBooking(newBooking);

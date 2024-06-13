@@ -51,7 +51,7 @@ public class WorkoutSessionController {
         return new ResponseEntity<>(workoutSessionService.getAllWorkoutSession(pageable), HttpStatus.OK);
     }
 
-    @PutMapping("/admin/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<WorkoutSession> updateWorkoutSession(@RequestBody WorkoutSession workoutSession, @PathVariable Long id){
         return new ResponseEntity<>(workoutSessionService.updateWorkoutSession(workoutSession, id), HttpStatus.OK);
     }
