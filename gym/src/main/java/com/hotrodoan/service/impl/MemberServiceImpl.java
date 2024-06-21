@@ -107,15 +107,12 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.findById(id).map(mb -> {
             User user = memberRepository.findById(id).get().getUser();
             user.setName(memberDTO.getName());
-            user.setUsername(memberDTO.getUsername());
-            user.setEmail(memberDTO.getEmail());
             User updatedUser = userService.save(user);
 
             mb.setPhone(memberDTO.getPhone());
             mb.setCccd(memberDTO.getCccd());
             mb.setSex(memberDTO.getSex());
             mb.setUser(updatedUser);
-            mb.setGymBranch(memberDTO.getGymBranch());
             mb.setAddress(memberDTO.getAddress());
             return memberRepository.save(mb);
         }).orElseThrow(() -> new NotFoundMemberException("Không tìm thấy thành viên"));
